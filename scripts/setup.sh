@@ -18,7 +18,7 @@ fi
 CEF_BRANCH="${BRANCH##*_}"
 
 # optionally replace with "macosarm64" for Apple Silicon
-CEF_PLATFORM="macosx64"
+CEF_PLATFORM="macosarm64"
 
 if [ -z "$(which jq)" ]; then
     echo "ERROR: jq not found; brew install jq"
