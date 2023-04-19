@@ -25,7 +25,7 @@ public extension CEFServer {
     /// CefServerHandler::OnServerCreated documentation for a description of server
     /// lifespan.
     /// CEF name: `CreateServer`
-    public static func create(address: String, port: UInt16, backlogSize: Int, handler: CEFServerHandler) {
+    static func create(address: String, port: UInt16, backlogSize: Int, handler: CEFServerHandler) {
         let cefStr = CEFStringPtrCreateFromSwiftString(address)
         defer { CEFStringPtrRelease(cefStr) }
         cef_server_create(cefStr, port, Int32(backlogSize), handler.toCEF())
@@ -33,7 +33,7 @@ public extension CEFServer {
     
     /// Returns the task runner for the dedicated server thread.
     /// CEF name: `GetTaskRunner`
-    public var taskRunner: CEFTaskRunner {
+    var taskRunner: CEFTaskRunner {
         let cefPtr = cefObject.get_task_runner(cefObjectPtr)
         return CEFTaskRunner.fromCEF(cefPtr)!
     }
@@ -42,7 +42,7 @@ public extension CEFServer {
     /// CefServerHandler::OnServerCreated documentation for a description of
     /// server lifespan.
     /// CEF name: `Shutdown`
-    public func shutDown() {
+    func shutDown() {
         cefObject.shutdown(cefObjectPtr)
     }
     
@@ -51,13 +51,13 @@ public extension CEFServer {
     /// description of server lifespan. This method must be called on the dedicated
     /// server thread.
     /// CEF name: `IsRunning`
-    public var isRunning: Bool {
+    var isRunning: Bool {
         return cefObject.is_running(cefObjectPtr) != 0
     }
     
     /// Returns the server address including the port number.
     /// CEF name: `GetAddress`
-    public var addressString: String {
+    var addressString: String {
         let cefStr = cefObject.get_address(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStr) }
         return CEFStringToSwiftString(cefStr!.pointee)
@@ -66,14 +66,14 @@ public extension CEFServer {
     /// Returns true if the server currently has a connection. This method must be
     /// called on the dedicated server thread.
     /// CEF name: `HasConnection`
-    public var hasConnection: Bool {
+    var hasConnection: Bool {
         return cefObject.has_connection(cefObjectPtr) != 0
     }
     
     /// Returns true if |connection_id| represents a valid connection. This method
     /// must be called on the dedicated server thread.
     /// CEF name: `IsValidConnection`
-    public func isValidConnection(id: ConnectionID) -> Bool {
+    func isValidConnection(id: ConnectionID) -> Bool {
         return cefObject.is_valid_connection(cefObjectPtr, Int32(id)) != 0
     }
     
@@ -83,11 +83,11 @@ public extension CEFServer {
     /// of |data| in bytes. The contents of |data| will be copied. The connection
     /// will be closed automatically after the response is sent.
     /// CEF name: `SendHttp200Response`
-    public func sendHTTP200Response(id: ConnectionID, contentType: String, data: Data) {
+    func sendHTTP200Response(id: ConnectionID, contentType: String, data: Data) {
         let cefStr = CEFStringPtrCreateFromSwiftString(contentType)
         defer { CEFStringPtrRelease(cefStr) }
-        data.withUnsafeBytes { buffer in
-            cefObject.send_http200response(cefObjectPtr, Int32(id), cefStr, buffer, data.count)
+        withUnsafeBytes(of: data) { buffer in
+            cefObject.send_http200response(cefObjectPtr, Int32(id), cefStr, buffer.baseAddress, data.count)
         }
     }
     
@@ -95,7 +95,7 @@ public extension CEFServer {
     /// |connection_id|. The connection will be closed automatically after the
     /// response is sent.
     /// CEF name: `SendHttp404Response`
-    public func sendHTTP404Response(id: ConnectionID) {
+    func sendHTTP404Response(id: ConnectionID) {
         cefObject.send_http404response(cefObjectPtr, Int32(id))
     }
     
@@ -104,7 +104,7 @@ public extension CEFServer {
     /// message. The connection will be closed automatically after the response is
     /// sent.
     /// CEF name: `SendHttp500Response`
-    public func sendHTTP500Response(id: ConnectionID, message: String) {
+    func sendHTTP500Response(id: ConnectionID, message: String) {
         let cefStr = CEFStringPtrCreateFromSwiftString(message)
         defer { CEFStringPtrRelease(cefStr) }
         cefObject.send_http500response(cefObjectPtr, Int32(id), cefStr)
@@ -123,7 +123,7 @@ public extension CEFServer {
     /// SendRawData method to send the content, if applicable, and call
     /// CloseConnection after all content has been sent.
     /// CEF name: `SendHttpResponse`
-    public func sendHTTPResponse(id: ConnectionID,
+    func sendHTTPResponse(id: ConnectionID,
                                  statusCode: Int,
                                  contentType: String,
                                  contentLength: UInt64,
@@ -153,16 +153,16 @@ public extension CEFServer {
     /// indicated by the "Content-Length" header, if specified. See
     /// SendHttpResponse documentation for intended usage.
     /// CEF name: `SendRawData`
-    public func sendRawData(id: ConnectionID, data: Data) {
-        data.withUnsafeBytes { buffer in
-            cefObject.send_raw_data(cefObjectPtr, Int32(id), buffer, data.count)
+    func sendRawData(id: ConnectionID, data: Data) {
+        withUnsafeBytes(of: data) { buffer in
+            cefObject.send_raw_data(cefObjectPtr, Int32(id), buffer.baseAddress, data.count)
         }
     }
     
     /// Close the connection identified by |connection_id|. See SendHttpResponse
     /// documentation for intended usage.
     /// CEF name: `CloseConnection`
-    public func closeConnection(id: ConnectionID) {
+    func closeConnection(id: ConnectionID) {
         cefObject.close_connection(cefObjectPtr, Int32(id))
     }
     
@@ -172,9 +172,9 @@ public extension CEFServer {
     // bytes. The contents of |data| will be copied. See
     // CefServerHandler::OnWebSocketRequest documentation for intended usage.
     /// CEF name: `SendWebSocketMessage`
-    public func sendWebSocketMessage(id: ConnectionID, data: Data) {
-        data.withUnsafeBytes { buffer in
-            cefObject.send_web_socket_message(cefObjectPtr, Int32(id), buffer, data.count)
+    func sendWebSocketMessage(id: ConnectionID, data: Data) {
+        withUnsafeBytes(of: data) { buffer in
+            cefObject.send_web_socket_message(cefObjectPtr, Int32(id), buffer.baseAddress, data.count)
         }
     }
 

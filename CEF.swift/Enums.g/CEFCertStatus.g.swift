@@ -18,7 +18,7 @@ public struct CEFCertStatus: OptionSet {
     }
 
     /// CEF name: `CERT_STATUS_NONE`.
-    public static let none = CEFCertStatus(rawValue: 0)
+    public static let none = CEFCertStatus([])
     /// CEF name: `CERT_STATUS_COMMON_NAME_INVALID`.
     public static let commonNameInvalid = CEFCertStatus(rawValue: 1 << 0)
     /// CEF name: `CERT_STATUS_DATE_INVALID`.

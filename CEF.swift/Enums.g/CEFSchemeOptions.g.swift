@@ -17,7 +17,7 @@ public struct CEFSchemeOptions: OptionSet {
     }
 
     /// CEF name: `CEF_SCHEME_OPTION_NONE`.
-    public static let none = CEFSchemeOptions(rawValue: 0)
+    public static let none = CEFSchemeOptions([])
 
     /// If CEF_SCHEME_OPTION_STANDARD is set the scheme will be treated as a
     /// standard scheme. Standard schemes are subject to URL canonicalization and

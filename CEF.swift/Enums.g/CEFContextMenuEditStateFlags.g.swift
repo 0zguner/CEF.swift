@@ -16,7 +16,7 @@ public struct CEFContextMenuEditStateFlags: OptionSet {
     }
 
     /// CEF name: `CM_EDITFLAG_NONE`.
-    public static let none = CEFContextMenuEditStateFlags(rawValue: 0)
+    public static let none = CEFContextMenuEditStateFlags([])
     /// CEF name: `CM_EDITFLAG_CAN_UNDO`.
     public static let canUndo = CEFContextMenuEditStateFlags(rawValue: 1 << 0)
     /// CEF name: `CM_EDITFLAG_CAN_REDO`.

@@ -9,23 +9,23 @@
 import Foundation
 
 public extension CEFRequest {
-    public typealias HeaderMap = [String: [String]]
+    typealias HeaderMap = [String: [String]]
     
     /// Create a new CefRequest object.
     /// CEF name: `Create`
-    public convenience init?() {
+    convenience init?() {
         self.init(ptr: cef_request_create())
     }
     
     /// Returns true if this object is read-only.
     /// CEF name: `IsReadOnly`
-    public var isReadOnly: Bool {
+    var isReadOnly: Bool {
         return cefObject.is_read_only(cefObjectPtr) != 0
     }
     
     /// Fully qualified URL.
     /// CEF name: `GetURL`, `SetURL`
-    public var url: URL? {
+    var url: URL? {
         get { return getURL() }
         set { setURL(newValue) }
     }
@@ -51,7 +51,7 @@ public extension CEFRequest {
     /// Request method type. The value will default to POST if post data
     /// is provided and GET otherwise.
     /// CEF name: `GetMethod`, `SetMethod`
-    public var method: String {
+    var method: String {
         get { return getMethod() }
         set { setMethod(newValue) }
     }
@@ -75,14 +75,14 @@ public extension CEFRequest {
     /// fully qualified with an HTTP or HTTPS scheme component. Any username,
     /// password or ref component will be removed.
     /// CEF name: `GetReferrerURL`, `SetReferrer`
-    public var referrerURL: URL? {
+    var referrerURL: URL? {
         get { return getReferrerURL() }
         set { setReferrerURL(newValue, policy: referrerPolicy) }
     }
     
     /// Get the referrer policy.
     /// CEF name: `GetReferrerPolicy`, `SetReferrer`
-    public var referrerPolicy: CEFReferrerPolicy {
+    var referrerPolicy: CEFReferrerPolicy {
         get { return getReferrerPolicy() }
         set { setReferrerURL(referrerURL, policy: newValue) }
     }
@@ -109,7 +109,7 @@ public extension CEFRequest {
 
     /// Get the post data.
     /// CEF name: `GetPostData`, `SetPostData`
-    public var postData: CEFPOSTData? {
+    var postData: CEFPOSTData? {
         get {
             let cefPOSTDataPtr = cefObject.get_post_data(cefObjectPtr)
             return CEFPOSTData.fromCEF(cefPOSTDataPtr)
@@ -119,7 +119,7 @@ public extension CEFRequest {
     
     /// Header values. Will not include the Referer value if any.
     /// CEF name: `GetHeaderMap`, `SetHeaderMap`
-    public var headers: HeaderMap {
+    var headers: HeaderMap {
         get { return getHeaderMap() }
         set { setHeaderMap(newValue) }
     }
@@ -167,7 +167,7 @@ public extension CEFRequest {
     
     /// Set all values at one time.
     /// CEF name: `Set`
-    public func set(url: URL, method: String, postData: CEFPOSTData? = nil, headers: HeaderMap) {
+    func set(url: URL, method: String, postData: CEFPOSTData? = nil, headers: HeaderMap) {
         let cefURLPtr = CEFStringPtrCreateFromSwiftString(url.absoluteString)
         let cefMethodPtr = CEFStringPtrCreateFromSwiftString(method)
         let cefHeaderMap = CEFStringMultimapCreateFromSwiftDictionaryOfArrays(headers)
@@ -184,18 +184,18 @@ public extension CEFRequest {
     /// The flags used in combination with CefURLRequest. See
     /// cef_urlrequest_flags_t for supported values.
     /// CEF name: `GetFlags`, `SetFlags`
-    public var flags: CEFURLRequestFlags {
+    var flags: CEFURLRequestFlags {
         get {
             let cefFlags = cefObject.get_flags(cefObjectPtr)
             return CEFURLRequestFlags(rawValue: UInt32(cefFlags))
         }
-        set { cefObject.set_flags(cefObjectPtr, Int32(flags.rawValue)) }
+        set { cefObject.set_flags(cefObjectPtr, Int32(newValue.rawValue)) }
     }
 
     /// The URL to the first party for cookies used in combination with
     /// CefURLRequest.
     /// CEF name: `GetFirstPartyForCookies`, `SetFirstPartyForCookies`
-    public var firstPartyURLForCookies: URL? {
+    var firstPartyURLForCookies: URL? {
         get { return getFirstPartyURLForCookies() }
         set { setFirstPartyURLForCookies(newValue) }
     }
@@ -224,7 +224,7 @@ public extension CEFRequest {
     /// Get the resource type for this request. Only available in the browser
     /// process.
     /// CEF name: `GetResourceType`
-    public var resourceType: CEFResourceType {
+    var resourceType: CEFResourceType {
         let cefRT = cefObject.get_resource_type(cefObjectPtr)
         return CEFResourceType.fromCEF(cefRT)
     }
@@ -233,7 +233,7 @@ public extension CEFRequest {
     /// process and only applies to requests that represent a main frame or
     /// sub-frame navigation.
     /// CEF name: `GetTransitionType`
-    public var transitionType: CEFTransitionType {
+    var transitionType: CEFTransitionType {
         let cefTT = cefObject.get_transition_type(cefObjectPtr)
         return CEFTransitionType.fromCEF(cefTT)
     }
@@ -242,7 +242,7 @@ public extension CEFRequest {
     /// specified. Can be used by CefResourceRequestHandler implementations in the
     /// browser process to track a single request across multiple callbacks.
     /// CEF name: `GetIdentifier`
-    public var identifier: UInt64? {
+    var identifier: UInt64? {
         let cefID = cefObject.get_identifier(cefObjectPtr)
         return cefID != 0 ? cefID : nil
     }

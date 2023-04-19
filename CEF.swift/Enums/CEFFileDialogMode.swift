@@ -51,8 +51,8 @@ public struct CEFFileDialogMode: RawRepresentable {
         public static let hideReadOnly = Flags(rawValue: 0x02000000)
     }
     
-    public var type: DialogType { get { return DialogType(rawValue: UInt8(rawValue & FILE_DIALOG_TYPE_MASK.rawValue))! } }
-    public var flags: Flags { get { return Flags(rawValue: rawValue & ~FILE_DIALOG_TYPE_MASK.rawValue) } }
+    public var type: DialogType { get { return DialogType(rawValue: UInt8(rawValue))! } }
+    public var flags: Flags { get { return Flags(rawValue: rawValue) } }
 }
 
 extension CEFFileDialogMode {

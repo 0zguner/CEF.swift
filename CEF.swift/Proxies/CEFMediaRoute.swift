@@ -11,7 +11,7 @@ import Foundation
 public extension CEFMediaRoute {
     /// Returns the ID for this route.
     /// CEF name: `GetId`
-    public var id: String? {
+    var id: String? {
         let cefStrPtr = cefObject.get_id(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr)
@@ -19,30 +19,30 @@ public extension CEFMediaRoute {
     
     /// Returns the source associated with this route.
     /// CEF name: `GetSource`
-    public var source: CEFMediaSource? {
+    var source: CEFMediaSource? {
         let cefSource = cefObject.get_source(cefObjectPtr)
         return CEFMediaSource.fromCEF(cefSource)
     }
     
     /// Returns the sink associated with this route.
     /// CEF name: `GetSink`
-    public var sink: CEFMediaSink? {
+    var sink: CEFMediaSink? {
         let cefSink = cefObject.get_sink(cefObjectPtr)
         return CEFMediaSink.fromCEF(cefSink)
     }
 
     /// Send a message over this route. |message| will be copied if necessary.
     /// CEF name: `SendRouteMessage`
-    public func sendRouteMessage(_ messageData: Data) {
-        messageData.withUnsafeBytes { ptr in
-            cefObject.send_route_message(cefObjectPtr, ptr, messageData.count)
+    func sendRouteMessage(_ messageData: Data) {
+        withUnsafeBytes(of: messageData) { ptr in
+            cefObject.send_route_message(cefObjectPtr, ptr.baseAddress, messageData.count)
         }
     }
     
     /// Terminate this route. Will result in an asynchronous call to
     /// CefMediaObserver::OnRoutes on all registered observers.
     /// CEF name: `Terminate`
-    public func terminate() {
+    func terminate() {
         cefObject.terminate(cefObjectPtr)
     }
 }

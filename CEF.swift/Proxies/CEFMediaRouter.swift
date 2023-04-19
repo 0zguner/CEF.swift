@@ -14,7 +14,7 @@ public extension CEFMediaRouter {
     /// thread after the manager's storage has been initialized. Equivalent to
     /// calling CefRequestContext::GetGlobalContext()->GetMediaRouter().
     /// CEF name: `GetGlobalMediaRouter`
-    public static func getGlobal(callback: CEFCompletionCallback? = nil) -> CEFMediaRouter {
+    static func getGlobal(callback: CEFCompletionCallback? = nil) -> CEFMediaRouter {
         let cefCallbackPtr = callback?.toCEF()
         let cefRouter = cef_media_router_get_global(cefCallbackPtr)
         return CEFMediaRouter.fromCEF(cefRouter)!
@@ -23,7 +23,7 @@ public extension CEFMediaRouter {
     /// Add an observer for MediaRouter events. The observer will remain registered
     /// until the returned Registration object is destroyed.
     /// CEF name: `AddObserver`
-    public func addObserver(_ observer: CEFMediaObserver) -> CEFRegistration {
+    func addObserver(_ observer: CEFMediaObserver) -> CEFRegistration {
         let cefReg = cefObject.add_observer(cefObjectPtr, observer.toCEF())
         return CEFRegistration.fromCEF(cefReg)!
     }
@@ -32,7 +32,7 @@ public extension CEFMediaRouter {
     /// URN schemes include "cast:" and "dial:", and will be already known by the
     /// client application (e.g. "cast:<appId>?clientId=<clientId>").
     /// CEF name: `GetSource`
-    public func source(for urn: String) -> CEFMediaSource? {
+    func source(for urn: String) -> CEFMediaSource? {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(urn)
         defer { CEFStringPtrRelease(cefStrPtr) }
         let cefSource = cefObject.get_source(cefObjectPtr, cefStrPtr)
@@ -42,7 +42,7 @@ public extension CEFMediaRouter {
     /// Trigger an asynchronous call to CefMediaObserver::OnSinks on all
     /// registered observers.
     /// CEF name: `NotifyCurrentSinks`
-    public func notifyCurrentSinks() {
+    func notifyCurrentSinks() {
         cefObject.notify_current_sinks(cefObjectPtr)
     }
 
@@ -53,14 +53,14 @@ public extension CEFMediaRouter {
     /// asynchronous call to CefMediaObserver::OnRoutes on all registered
     /// observers.
     /// CEF name: `CreateRoute`
-    public func createRoute(from source: CEFMediaSource, to sink: CEFMediaSink, callback: CEFMediaRouteCreateCallback) {
+    func createRoute(from source: CEFMediaSource, to sink: CEFMediaSink, callback: CEFMediaRouteCreateCallback) {
         cefObject.create_route(cefObjectPtr, source.toCEF(), sink.toCEF(), callback.toCEF())
     }
     
     /// Trigger an asynchronous call to CefMediaObserver::OnRoutes on all
     /// registered observers.
     /// CEF name: `NotifyCurrentRoutes`
-    public func notifyCurrentRoutes() {
+    func notifyCurrentRoutes() {
         cefObject.notify_current_routes(cefObjectPtr)
     }
 }
@@ -73,7 +73,7 @@ public extension CEFMediaRouter {
     /// asynchronous call to CefMediaObserver::OnRoutes on all registered
     /// observers.
     /// CEF name: `CreateRoute`
-    public func createRoute(from source: CEFMediaSource, to sink: CEFMediaSink, block: @escaping CEFMediaRouteCreateCallbackOnMediaRouteCreateFinishedBlock) {
+    func createRoute(from source: CEFMediaSource, to sink: CEFMediaSink, block: @escaping CEFMediaRouteCreateCallbackOnMediaRouteCreateFinishedBlock) {
         createRoute(from: source, to: sink, callback: CEFMediaRouteCreateCallbackBridge(block: block))
     }
 }

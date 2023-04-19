@@ -12,7 +12,7 @@ public extension CEFPrintJobCallback {
 
     /// Indicate completion of the print job.
     /// CEF name: `Continue`
-    public func doContinue() {
+    func doContinue() {
         cefObject.cont(cefObjectPtr)
     }
     

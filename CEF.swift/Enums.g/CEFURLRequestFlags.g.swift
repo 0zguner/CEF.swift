@@ -18,7 +18,7 @@ public struct CEFURLRequestFlags: OptionSet {
 
     /// Default behavior.
     /// CEF name: `UR_FLAG_NONE`.
-    public static let none = CEFURLRequestFlags(rawValue: 0)
+    public static let none = CEFURLRequestFlags([])
 
     /// If set the cache will be skipped when handling the request. Setting this
     /// value is equivalent to specifying the "Cache-Control: no-cache" request

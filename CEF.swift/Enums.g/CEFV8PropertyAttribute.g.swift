@@ -19,7 +19,7 @@ public struct CEFV8PropertyAttribute: OptionSet {
     /// Writeable, Enumerable,
     /// Configurable
     /// CEF name: `V8_PROPERTY_ATTRIBUTE_NONE`.
-    public static let none = CEFV8PropertyAttribute(rawValue: 0)
+    public static let none = CEFV8PropertyAttribute([])
 
     /// Not writeable
     /// CEF name: `V8_PROPERTY_ATTRIBUTE_READONLY`.

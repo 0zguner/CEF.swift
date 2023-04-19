@@ -74,22 +74,6 @@ func CEFResourceRequestHandler_on_resource_redirect(ptr: UnsafeMutablePointer<ce
     CEFStringSetFromSwiftString(url.absoluteString, cefStringPtr: newURL!)
 }
 
-func CEFResourceRequestHandler_on_resource_response(ptr: UnsafeMutablePointer<cef_resource_request_handler_t>?,
-                                                    browser: UnsafeMutablePointer<cef_browser_t>?,
-                                                    frame: UnsafeMutablePointer<cef_frame_t>?,
-                                                    request: UnsafeMutablePointer<cef_request_t>?,
-                                                    response: UnsafeMutablePointer<cef_response_t>?) -> Int32 {
-    guard let obj = CEFResourceRequestHandlerMarshaller.get(ptr) else {
-        return 0
-    }
-
-    let action = obj.onResourceResponse(browser: CEFBrowser.fromCEF(browser),
-                                        frame: CEFFrame.fromCEF(frame),
-                                        request: CEFRequest.fromCEF(request)!,
-                                        response: CEFResponse.fromCEF(response)!)
-    return action == .redirect || action == .retry ? 1 : 0
-}
-
 func CEFResourceRequestHandler_get_resource_response_filter(ptr: UnsafeMutablePointer<cef_resource_request_handler_t>?,
                                                             browser: UnsafeMutablePointer<cef_browser_t>?,
                                                             frame: UnsafeMutablePointer<cef_frame_t>?,

@@ -75,24 +75,6 @@ public protocol CEFResourceRequestHandler {
                             response: CEFResponse,
                             newURL: inout URL)
 
-    /// Called on the IO thread when a resource response is received. The |browser|
-    /// and |frame| values represent the source of the request, and may be NULL for
-    /// requests originating from service workers or CefURLRequest. To allow the
-    /// resource load to proceed without modification return false. To redirect or
-    /// retry the resource load optionally modify |request| and return true.
-    /// Modification of the request URL will be treated as a redirect. Requests
-    /// handled using the default network loader cannot be redirected in this
-    /// callback. The |response| object cannot be modified in this callback.
-    ///
-    /// WARNING: Redirecting using this method is deprecated. Use
-    /// OnBeforeResourceLoad or GetResourceHandler to perform redirects.
-    /// CEF name: `OnResourceResponse`
-    @available(*, deprecated, message: "Use onBeforeResourceLoad or resourceHandler to perform redirects")
-    func onResourceResponse(browser: CEFBrowser?,
-                            frame: CEFFrame?,
-                            request: CEFRequest,
-                            response: CEFResponse) -> CEFOnResourceResponseAction
-
     /// Called on the IO thread to optionally filter resource response content. The
     /// |browser| and |frame| values represent the source of the request, and may
     /// be NULL for requests originating from service workers or CefURLRequest.

@@ -27,7 +27,7 @@ class SimpleApp: CEFApp, CEFBrowserProcessHandler {
         let settings = CEFBrowserSettings()
 
         let cmdLine = CEFCommandLine.global
-        var url = URL(string: "http://www.google.com")!
+        var url = URL(string: "https://www.google.com")!
         if let urlSwitch = cmdLine?.switchValue(for: "url"), !urlSwitch.isEmpty {
             url = URL(string: urlSwitch)!
         }

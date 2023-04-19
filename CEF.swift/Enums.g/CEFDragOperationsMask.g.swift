@@ -18,7 +18,7 @@ public struct CEFDragOperationsMask: OptionSet {
     }
 
     /// CEF name: `DRAG_OPERATION_NONE`.
-    public static let none = CEFDragOperationsMask(rawValue: 0)
+    public static let none = CEFDragOperationsMask([])
     /// CEF name: `DRAG_OPERATION_COPY`.
     public static let copy = CEFDragOperationsMask(rawValue: 1)
     /// CEF name: `DRAG_OPERATION_LINK`.

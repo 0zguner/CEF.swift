@@ -16,7 +16,7 @@ public extension CEFExtension {
     /// extension public key, if available, or on the extension path. See
     /// https://developer.chrome.com/extensions/manifest/key for details.
     /// CEF name: `GetIdentifier`
-    public var identifier: Identifier {
+    var identifier: Identifier {
         let cefStr = cefObject.get_identifier(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStr) }
         return CEFStringToSwiftString(cefStr!.pointee)
@@ -26,7 +26,7 @@ public extension CEFExtension {
     /// will be prefixed with PK_DIR_RESOURCES if a relative path was passed to
     /// CefRequestContext::LoadExtension.
     /// CEF name: `GetPath`
-    public var path: String {
+    var path: String {
         let cefStr = cefObject.get_path(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStr) }
         return CEFStringToSwiftString(cefStr!.pointee)
@@ -35,7 +35,7 @@ public extension CEFExtension {
     /// Returns the extension manifest contents as a CefDictionaryValue object. See
     /// https://developer.chrome.com/extensions/manifest for details.
     /// CEF name: `GetManifest`
-    public var manifest: CEFDictionaryValue {
+    var manifest: CEFDictionaryValue {
         let cefDict = cefObject.get_manifest(cefObjectPtr)
         return CEFDictionaryValue.fromCEF(cefDict)!
     }
@@ -44,14 +44,14 @@ public extension CEFExtension {
     /// Extensions are considered the same if identifier, path and loader context
     /// match.
     /// CEF name: `IsSame`
-    public func isSame(as other: CEFExtension) -> Bool {
+    func isSame(as other: CEFExtension) -> Bool {
         return cefObject.is_same(cefObjectPtr, other.toCEF()) != 0
     }
     
     /// Returns the handler for this extension. Will return NULL for internal
     /// extensions or if no handler was passed to CefRequestContext::LoadExtension.
     /// CEF name: `GetHandler`
-    public var handler: CEFExtensionHandler? {
+    var handler: CEFExtensionHandler? {
         let cefHandler = cefObject.get_handler(cefObjectPtr)
         return CEFExtensionHandlerMarshaller.take(cefHandler)
     }
@@ -61,7 +61,7 @@ public extension CEFExtension {
     /// CefRequestContext::LoadExtension documentation for more information about
     /// loader contexts. Must be called on the browser process UI thread.
     /// CEF name: `GetLoaderContext`
-    public var loaderContext: CEFRequestContext? {
+    var loaderContext: CEFRequestContext? {
         let cefCtx = cefObject.get_loader_context(cefObjectPtr)
         return CEFRequestContext.fromCEF(cefCtx)
     }
@@ -69,7 +69,7 @@ public extension CEFExtension {
     /// Returns true if this extension is currently loaded. Must be called on the
     /// browser process UI thread.
     /// CEF name: `IsLoaded`
-    public var isLoaded: Bool {
+    var isLoaded: Bool {
         return cefObject.is_loaded(cefObjectPtr) != 0
     }
     
@@ -77,7 +77,7 @@ public extension CEFExtension {
     /// loaded. Will result in a call to CefExtensionHandler::OnExtensionUnloaded
     /// on success.
     /// CEF name: `Unload`
-    public func unload() {
+    func unload() {
         cefObject.unload(cefObjectPtr)
     }
     

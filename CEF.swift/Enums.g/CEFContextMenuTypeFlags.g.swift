@@ -18,7 +18,7 @@ public struct CEFContextMenuTypeFlags: OptionSet {
 
     /// No node is selected.
     /// CEF name: `CM_TYPEFLAG_NONE`.
-    public static let none = CEFContextMenuTypeFlags(rawValue: 0)
+    public static let none = CEFContextMenuTypeFlags([])
 
     /// The top page is selected.
     /// CEF name: `CM_TYPEFLAG_PAGE`.

@@ -17,7 +17,7 @@ public protocol CEFScopedObject: DefaultInitializable {
     var base: cef_base_scoped_t { get set }
 }
 
-protocol CEFRefCounting: class {
+protocol CEFRefCounting: AnyObject {
     func addRef()
     func release() -> Bool
     func hasOneRef() -> Bool

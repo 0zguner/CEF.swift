@@ -7,7 +7,21 @@
 
 import Foundation
 
-extension cef_request_context_t: CEFObject {}
+extension cef_request_context_t: CEFObject {
+    
+    public var base: cef_base_ref_counted_t {
+        get {
+            print("no")
+            fatalError()
+        }
+        set {
+            print("no")
+
+            fatalError()
+        }
+    }
+
+}
 
 /// A request context provides request handling for a set of related browser
 /// or URL request objects. A request context can be specified when creating a

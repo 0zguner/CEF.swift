@@ -12,7 +12,7 @@ public extension CEFStreamReader {
     
     /// Create a new CefStreamReader object from a file.
     /// CEF name: `CreateForFile`
-    public convenience init?(filePath: String) {
+    convenience init?(filePath: String) {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(filePath)
         defer { CEFStringPtrRelease(cefStrPtr) }
         self.init(ptr: cef_stream_reader_create_for_file(cefStrPtr))
@@ -20,22 +20,22 @@ public extension CEFStreamReader {
     
     /// Create a new CefStreamReader object from data.
     /// CEF name: `CreateForData`
-    public convenience init?(data: Data) {
-        let ptr = data.withUnsafeBytes { buffer in
-            return cef_stream_reader_create_for_data(UnsafeMutableRawPointer(mutating: buffer), data.count)
+    convenience init?(data: Data) {
+        let ptr = withUnsafeBytes(of: data) { buffer in
+            cef_stream_reader_create_for_data(UnsafeMutableRawPointer(mutating: buffer.baseAddress), data.count)
         }
         self.init(ptr: ptr)
     }
     
     /// Create a new CefStreamReader object from a custom handler.
     /// CEF name: `CreateForHandler`
-    public convenience init?(handler: CEFReadHandler) {
+    convenience init?(handler: CEFReadHandler) {
         self.init(ptr: cef_stream_reader_create_for_handler(handler.toCEF()))
     }
     
     /// Read raw binary data.
     /// CEF name: `Read`
-    public func read(buffer: UnsafeMutableRawPointer, chunkSize: size_t, count: size_t) -> size_t {
+    func read(buffer: UnsafeMutableRawPointer, chunkSize: size_t, count: size_t) -> size_t {
         return cefObject.read(cefObjectPtr, buffer, chunkSize, count)
     }
     
@@ -44,19 +44,19 @@ public extension CEFStreamReader {
     /// failure.
     /// CEF name: `Seek`
     @discardableResult
-    public func seek(to offset: Int64, from whence: CEFSeekPosition) -> Bool {
+    func seek(to offset: Int64, from whence: CEFSeekPosition) -> Bool {
         return cefObject.seek(cefObjectPtr, offset, whence.rawValue) == 0
     }
     
     /// Return the current offset position.
     /// CEF name: `Tell`
-    public func tell() -> Int64 {
+    func tell() -> Int64 {
         return cefObject.tell(cefObjectPtr)
     }
     
     /// Return non-zero if at end of file.
     /// CEF name: `Eof`
-    public func isEOF() -> Bool {
+    func isEOF() -> Bool {
         return cefObject.eof(cefObjectPtr) != 0
     }
     
@@ -64,7 +64,7 @@ public extension CEFStreamReader {
     /// which may block. Used as a hint for determining the thread to access the
     /// reader from.
     /// CEF name: `MayBlock`
-    public func mayBlock() -> Bool {
+    func mayBlock() -> Bool {
         return cefObject.may_block(cefObjectPtr) != 0
     }
 

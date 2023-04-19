@@ -23,7 +23,7 @@ public extension CEFURLRequest {
     ///
     /// The |request| object will be marked as read-only after calling this method.
     /// CEF name: `Create`
-    public convenience init?(request: CEFRequest, client: CEFURLRequestClient, context: CEFRequestContext? = nil) {
+    convenience init?(request: CEFRequest, client: CEFURLRequestClient, context: CEFRequestContext? = nil) {
         self.init(ptr: cef_urlrequest_create(request.toCEF(),
                                              client.toCEF(),
                                              context != nil ? context!.toCEF() : nil))
@@ -32,21 +32,21 @@ public extension CEFURLRequest {
     /// Returns the request object used to create this URL request. The returned
     /// object is read-only and should not be modified.
     /// CEF name: `GetRequest`
-    public var request: CEFRequest {
+    var request: CEFRequest {
         let cefReq = cefObject.get_request(cefObjectPtr)
         return CEFRequest.fromCEF(cefReq)!
     }
     
     /// Returns the client.
     /// CEF name: `GetClient`
-    public var client: CEFURLRequestClient {
+    var client: CEFURLRequestClient {
         let cefClient = cefObject.get_client(cefObjectPtr)
         return CEFURLRequestClientMarshaller.take(cefClient)!
     }
     
     /// Returns the request status.
     /// CEF name: `GetRequestStatus`
-    public var requestStatus: CEFURLRequestStatus {
+    var requestStatus: CEFURLRequestStatus {
         let cefStatus = cefObject.get_request_status(cefObjectPtr)
         return CEFURLRequestStatus.fromCEF(cefStatus)
     }
@@ -54,7 +54,7 @@ public extension CEFURLRequest {
     /// Returns the request error if status is UR_CANCELED or UR_FAILED, or 0
     /// otherwise.
     /// CEF name: `GetRequestError`
-    public var requestError: CEFErrorCode? {
+    var requestError: CEFErrorCode? {
         let cefError = cefObject.get_request_error(cefObjectPtr)
         return cefError.rawValue != 0 ? CEFErrorCode.fromCEF(cefError.rawValue) : nil
     }
@@ -63,7 +63,7 @@ public extension CEFURLRequest {
     /// Response information will only be available after the upload has completed.
     /// The returned object is read-only and should not be modified.
     /// CEF name: `GetResponse`
-    public var response: CEFResponse? {
+    var response: CEFResponse? {
         let cefResp = cefObject.get_response(cefObjectPtr)
         return CEFResponse.fromCEF(cefResp)
     }
@@ -71,13 +71,13 @@ public extension CEFURLRequest {
     /// Returns true if the response body was served from the cache. This includes
     /// responses for which revalidation was required.
     /// CEF name: `ResponseWasCached`
-    public var responseWasCached: Bool {
+    var responseWasCached: Bool {
         return cefObject.response_was_cached(cefObjectPtr) != 0
     }
 
     /// Cancel the request.
     /// CEF name: `Cancel`
-    public func cancel() {
+    func cancel() {
         cefObject.cancel(cefObjectPtr)
     }
 

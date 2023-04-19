@@ -12,21 +12,21 @@ public extension CEFV8Context {
     
     /// Returns the current (top) context object in the V8 context stack.
     /// CEF name: `GetCurrentContext`
-    public static var current: CEFV8Context? {
+    static var current: CEFV8Context? {
         let cefCtx = cef_v8context_get_current_context()
         return CEFV8Context.fromCEF(cefCtx)
     }
     
     /// Returns the entered (bottom) context object in the V8 context stack.
     /// CEF name: `GetEnteredContext`
-    public static var entered: CEFV8Context? {
+    static var entered: CEFV8Context? {
         let cefCtx = cef_v8context_get_entered_context()
         return CEFV8Context.fromCEF(cefCtx)
     }
 
     /// Returns true if V8 is currently inside a context.
     /// CEF name: `InContext`
-    public static var isV8InContext: Bool {
+    static var isV8InContext: Bool {
         return cef_v8context_in_context() != 0
     }
 
@@ -34,7 +34,7 @@ public extension CEFV8Context {
     /// be accessed from the thread on which they are created. This method can be
     /// called on any render process thread.
     /// CEF name: `GetTaskRunner`
-    public var taskRunner: CEFTaskRunner? {
+    var taskRunner: CEFTaskRunner? {
         let cefTaskRunner = cefObject.get_task_runner(cefObjectPtr)
         return CEFTaskRunner.fromCEF(cefTaskRunner)
     }
@@ -43,14 +43,14 @@ public extension CEFV8Context {
     /// the current thread. Do not call any other methods if this method returns
     /// false.
     /// CEF name: `IsValid`
-    public var isValid: Bool {
+    var isValid: Bool {
         return cefObject.is_valid(cefObjectPtr) != 0
     }
 
     /// Returns the browser for this context. This method will return an empty
     /// reference for WebWorker contexts.
     /// CEF name: `GetBrowser`
-    public var browser: CEFBrowser? {
+    var browser: CEFBrowser? {
         let cefBrowser = cefObject.get_browser(cefObjectPtr)
         return CEFBrowser.fromCEF(cefBrowser)
     }
@@ -58,7 +58,7 @@ public extension CEFV8Context {
     /// Returns the frame for this context. This method will return an empty
     /// reference for WebWorker contexts.
     /// CEF name: `GetFrame`
-    public var frame: CEFFrame? {
+    var frame: CEFFrame? {
         let cefFrame = cefObject.get_frame(cefObjectPtr)
         return CEFFrame.fromCEF(cefFrame)
     }
@@ -66,7 +66,7 @@ public extension CEFV8Context {
     /// Returns the global object for this context. The context must be entered
     /// before calling this method.
     /// CEF name: `GetGlobal`
-    public var globalObject: CEFV8Value? {
+    var globalObject: CEFV8Value? {
         let cefValue = cefObject.get_global(cefObjectPtr)
         return CEFV8Value.fromCEF(cefValue)
     }
@@ -78,7 +78,7 @@ public extension CEFV8Context {
     /// the scope was entered successfully.
     /// CEF name: `Enter`
     @discardableResult
-    public func enter() -> Bool {
+    func enter() -> Bool {
         return cefObject.enter(cefObjectPtr) != 0
     }
 
@@ -86,14 +86,14 @@ public extension CEFV8Context {
     /// true if the scope was exited successfully.
     /// CEF name: `Exit`
     @discardableResult
-    public func exit() -> Bool {
+    func exit() -> Bool {
         return cefObject.exit(cefObjectPtr) != 0
     }
     
     /// Returns true if this object is pointing to the same handle as |that|
     /// object.
     /// CEF name: `IsSame`
-    public func isSame(as other: CEFV8Context) -> Bool {
+    func isSame(as other: CEFV8Context) -> Bool {
         return cefObject.is_same(cefObjectPtr, other.toCEF()) != 0
     }
 
@@ -104,7 +104,7 @@ public extension CEFV8Context {
     /// the function will return true. On failure |exception| will be set to the
     /// exception, if any, and the function will return false.
     /// CEF name: `Eval`
-    public func eval(_ code: String,
+    func eval(_ code: String,
                      scriptURL: URL? = nil,
                      startLine: Int = 1) -> CEFV8EvalResult {
         let cefCodePtr = CEFStringPtrCreateFromSwiftString(code)

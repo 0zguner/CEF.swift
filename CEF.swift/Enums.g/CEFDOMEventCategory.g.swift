@@ -16,7 +16,7 @@ public struct CEFDOMEventCategory: OptionSet {
     }
 
     /// CEF name: `DOM_EVENT_CATEGORY_UNKNOWN`.
-    public static let unknown = CEFDOMEventCategory(rawValue: 0x0)
+    public static let unknown = CEFDOMEventCategory([])
     /// CEF name: `DOM_EVENT_CATEGORY_UI`.
     public static let ui = CEFDOMEventCategory(rawValue: 0x1)
     /// CEF name: `DOM_EVENT_CATEGORY_MOUSE`.

@@ -17,32 +17,6 @@ func CEFRequestContextHandler_on_request_context_initialized(ptr: UnsafeMutableP
     obj.onRequestContextInitialized(context: CEFRequestContext.fromCEF(context)!)
 }
 
-func CEFRequestContextHandler_on_before_plugin_load(ptr: UnsafeMutablePointer<cef_request_context_handler_t>?,
-                                                    mimeType: UnsafePointer<cef_string_t>?,
-                                                    pluginURL: UnsafePointer<cef_string_t>?,
-                                                    isMainFrame: Int32,
-                                                    topOriginURL: UnsafePointer<cef_string_t>?,
-                                                    pluginInfo: UnsafeMutablePointer<cef_web_plugin_info_t>?,
-                                                    pluginPolicy: UnsafeMutablePointer<cef_plugin_policy_t>?) -> Int32 {
-    guard let obj = CEFRequestContextHandlerMarshaller.get(ptr) else {
-        return 0
-    }
-
-    let action = obj.onBeforePluginLoad(mimeType: CEFStringToSwiftString(mimeType!.pointee),
-                                        pluginURL: pluginURL != nil ? URL(string: CEFStringToSwiftString(pluginURL!.pointee)) : nil,
-                                        isMainFrame: isMainFrame != 0,
-                                        topOriginURL: topOriginURL != nil ? URL(string: CEFStringToSwiftString(topOriginURL!.pointee)) : nil,
-                                        pluginInfo: CEFWebPluginInfo.fromCEF(pluginInfo)!,
-                                        defaultPolicy: CEFPluginPolicy.fromCEF(pluginPolicy!.pointee))
-    
-    if case .overridePolicy(let policy) = action {
-        pluginPolicy!.pointee = policy.toCEF()
-        return 1
-    }
-    
-    return 0
-}
-
 func CEFRequestContextHandler_get_resource_request_handler(ptr: UnsafeMutablePointer<cef_request_context_handler_t>?,
                                                            browser: UnsafeMutablePointer<cef_browser_t>?,
                                                            frame: UnsafeMutablePointer<cef_frame_t>?,

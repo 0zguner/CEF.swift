@@ -20,7 +20,7 @@ public extension CEFSchemeRegistrar {
     /// if an error occurs this method will return false.
     /// CEF name: `AddCustomScheme`
     @discardableResult
-    public func addCustomScheme(_ name: String, options: CEFSchemeOptions = .none) -> Bool {
+    func addCustomScheme(_ name: String, options: CEFSchemeOptions = .none) -> Bool {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(name)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return cefObject.add_custom_scheme(cefObjectPtr, cefStrPtr, Int32(options.toCEF().rawValue)) != 0

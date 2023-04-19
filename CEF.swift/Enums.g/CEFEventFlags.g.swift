@@ -16,7 +16,7 @@ public struct CEFEventFlags: OptionSet {
     }
 
     /// CEF name: `EVENTFLAG_NONE`.
-    public static let none = CEFEventFlags(rawValue: 0)
+    public static let none = CEFEventFlags([])
     /// CEF name: `EVENTFLAG_CAPS_LOCK_ON`.
     public static let capsLockOn = CEFEventFlags(rawValue: 1 << 0)
     /// CEF name: `EVENTFLAG_SHIFT_DOWN`.

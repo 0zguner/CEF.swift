@@ -106,8 +106,8 @@ public enum CEFParseUtils {
     /// method returns NULL.
     /// CEF name: `CefParseJSON`
     public static func parseJSON(_ jsonData: Data, options: CEFJSONParserOptions = .rfc) -> CEFValue? {
-        let cefValue = jsonData.withUnsafeBytes { ptr in
-            return cef_parse_json_buffer(ptr, jsonData.count, options.toCEF())
+        let cefValue = withUnsafeBytes(of: jsonData) { ptr in
+            return cef_parse_json_buffer(ptr.baseAddress, jsonData.count, options.toCEF())
         }
         return CEFValue.fromCEF(cefValue)
     }

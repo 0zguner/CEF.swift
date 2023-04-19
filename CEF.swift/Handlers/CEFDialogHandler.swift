@@ -37,7 +37,6 @@ public protocol CEFDialogHandler {
                       title: String?,
                       defaultPath: String?,
                       acceptFilters: [String],
-                      selectedFilterIndex: Int,
                       callback: CEFFileDialogCallback) -> CEFOnFileDialogAction
 
 }
@@ -49,7 +48,6 @@ public extension CEFDialogHandler {
                       title: String?,
                       defaultPath: String?,
                       acceptFilters: [String],
-                      selectedFilterIndex: Int,
                       callback: CEFFileDialogCallback) -> CEFOnFileDialogAction {
         return .showDefault
     }

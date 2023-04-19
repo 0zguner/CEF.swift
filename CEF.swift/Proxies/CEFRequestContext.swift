@@ -12,7 +12,7 @@ public extension CEFRequestContext {
 
     /// Returns the global context object.
     /// CEF name: `GetGlobalContext`
-    public static var global: CEFRequestContext? {
+    static var global: CEFRequestContext? {
         let cefCtx = cef_request_context_get_global_context()
         return CEFRequestContext.fromCEF(cefCtx)
     }
@@ -20,7 +20,7 @@ public extension CEFRequestContext {
     /// Creates a new context object with the specified |settings| and optional
     /// |handler|.
     /// CEF name: `CreateContext`
-    public convenience init?(settings: CEFRequestContextSettings, handler: CEFRequestContextHandler? = nil) {
+    convenience init?(settings: CEFRequestContextSettings, handler: CEFRequestContextHandler? = nil) {
         var cefSettings = settings.toCEF()
         defer { cefSettings.clear() }
 
@@ -32,7 +32,7 @@ public extension CEFRequestContext {
     /// Creates a new context object that shares storage with |other| and uses an
     /// optional |handler|.
     /// CEF name: `CreateContext`
-    public static func createShared(with context: CEFRequestContext,
+    static func createShared(with context: CEFRequestContext,
                                     handler: CEFRequestContextHandler? = nil) -> CEFRequestContext? {
         let cefHandlerPtr = handler?.toCEF()
         let cefCtx = cef_create_context_shared(context.toCEF(), cefHandlerPtr)
@@ -42,13 +42,13 @@ public extension CEFRequestContext {
     /// Returns true if this object is pointing to the same context as |that|
     /// object.
     /// CEF name: `IsSame`
-    public func isSame(as other: CEFRequestContext) -> Bool {
+    func isSame(as other: CEFRequestContext) -> Bool {
         return cefObject.is_same(cefObjectPtr, other.toCEF()) != 0
     }
 
     /// Returns true if this object is sharing the same storage as |that| object.
     /// CEF name: `IsSharingWith`
-    public func isSharingStorage(with other: CEFRequestContext) -> Bool {
+    func isSharingStorage(with other: CEFRequestContext) -> Bool {
         return cefObject.is_sharing_with(cefObjectPtr, other.toCEF()) != 0
     }
     
@@ -56,13 +56,13 @@ public extension CEFRequestContext {
     /// used by default when creating a browser or URL request with a NULL context
     /// argument.
     /// CEF name: `IsGlobal`
-    public var isGlobal: Bool {
+    var isGlobal: Bool {
         return cefObject.is_global(cefObjectPtr) != 0
     }
     
     /// Returns the handler for this context if any.
     /// CEF name: `GetHandler`
-    public var handler: CEFRequestContextHandler? {
+    var handler: CEFRequestContextHandler? {
         let cefHandler = cefObject.get_handler(cefObjectPtr)
         return CEFRequestContextHandlerMarshaller.take(cefHandler)
     }
@@ -70,7 +70,7 @@ public extension CEFRequestContext {
     /// Returns the cache path for this object. If empty an "incognito mode"
     /// in-memory cache is being used.
     /// CEF name: `GetCachePath`
-    public var cachePath: String? {
+    var cachePath: String? {
         let cefStrPtr = cefObject.get_cache_path(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr)
@@ -78,7 +78,7 @@ public extension CEFRequestContext {
     
     /// Returns the cookie manager for this object.
     /// CEF name: `GetCookieManager`
-    public var cookieManager: CEFCookieManager? {
+    var cookieManager: CEFCookieManager? {
         let cefCookieMgr = cefObject.get_cookie_manager(cefObjectPtr, nil)
         return CEFCookieManager.fromCEF(cefCookieMgr)
     }
@@ -87,7 +87,7 @@ public extension CEFRequestContext {
     /// will be executed asnychronously on the UI thread after the manager's
     /// storage has been initialized.
     /// CEF name: `GetCookieManager`
-    public func getCookieManager(with callback: CEFCompletionCallback? = nil) -> CEFCookieManager? {
+    func getCookieManager(with callback: CEFCompletionCallback? = nil) -> CEFCookieManager? {
         let cefCallbackPtr = callback?.toCEF()
         let cefCookieMgr = cefObject.get_cookie_manager(cefObjectPtr, cefCallbackPtr)
         return CEFCookieManager.fromCEF(cefCookieMgr)
@@ -106,7 +106,7 @@ public extension CEFRequestContext {
     /// called on any thread in the browser process.
     /// CEF name: `RegisterSchemeHandlerFactory`
     @discardableResult
-    public func registerSchemeHandlerFactory(_ factory: CEFSchemeHandlerFactory?,
+    func registerSchemeHandlerFactory(_ factory: CEFSchemeHandlerFactory?,
                                              forScheme scheme: String,
                                              domain: String? = nil) -> Bool {
         let cefSchemePtr = CEFStringPtrCreateFromSwiftString(scheme)
@@ -125,27 +125,23 @@ public extension CEFRequestContext {
     /// function may be called on any thread in the browser process.
     /// CEF name: `ClearSchemeHandlerFactories`
     @discardableResult
-    public func clearSchemeHandlerFactories() -> Bool {
+    func clearSchemeHandlerFactories() -> Bool {
         return cefObject.clear_scheme_handler_factories(cefObjectPtr) != 0
     }
-
-    /// Tells all renderer processes associated with this context to throw away
-    /// their plugin list cache. If |reload_pages| is true they will also reload
-    /// all pages with plugins. CefRequestContextHandler::OnBeforePluginLoad may
-    /// be called to rebuild the plugin list cache.
-    /// CEF name: `PurgePluginListCache`
-    public func purgePluginListCache(withReload reload: Bool) {
-        cefObject.purge_plugin_list_cache(cefObjectPtr, reload ? 1 : 0)
-    }
     
+    // TODO: Moved to 'cef_preference'
+    /*
     /// Returns true if a preference with the specified |name| exists. This method
     /// must be called on the browser process UI thread.
     /// CEF name: `HasPreference`
-    public func hasPreference(for name: String) -> Bool {
+
+    func hasPreference(for name: String) -> Bool {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(name)
         defer { CEFStringPtrRelease(cefStrPtr) }
+        cefObject.has_extension
         return cefObject.has_preference(cefObjectPtr, cefStrPtr) != 0
     }
+
     
     /// Returns the value for the preference with the specified |name|. Returns
     /// NULL if the preference does not exist. The returned object contains a copy
@@ -153,7 +149,8 @@ public extension CEFRequestContext {
     /// will not modify the underlying preference value. This method must be called
     /// on the browser process UI thread.
     /// CEF name: `GetPreference`
-    public func preferenceValue(for name: String) -> CEFValue? {
+
+    func preferenceValue(for name: String) -> CEFValue? {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(name)
         defer { CEFStringPtrRelease(cefStrPtr) }
         let cefValue = cefObject.get_preference(cefObjectPtr, cefStrPtr)
@@ -167,7 +164,7 @@ public extension CEFRequestContext {
     /// preference values. This method must be called on the browser process UI
     /// thread.
     /// CEF name: `GetAllPreferences`
-    public func allPreferences(includeDefaults: Bool) -> CEFDictionaryValue {
+    func allPreferences(includeDefaults: Bool) -> CEFDictionaryValue {
         let cefDict = cefObject.get_all_preferences(cefObjectPtr, includeDefaults ? 1 : 0)
         return CEFDictionaryValue.fromCEF(cefDict)!
     }
@@ -177,7 +174,7 @@ public extension CEFRequestContext {
     /// usually cannot be modified. This method must be called on the browser
     /// process UI thread.
     /// CEF name: `CanSetPreference`
-    public func canSetPreference(for name: String) -> Bool {
+    func canSetPreference(for name: String) -> Bool {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(name)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return cefObject.can_set_preference(cefObjectPtr, cefStrPtr) != 0
@@ -190,13 +187,14 @@ public extension CEFRequestContext {
     /// problem. This method must be called on the browser process UI thread.
     /// CEF name: `SetPreference`
     @discardableResult
-    public func setPreference(_ value: CEFValue?, for name: String) -> Bool {
+    func setPreference(_ value: CEFValue?, for name: String) -> Bool {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(name)
         defer { CEFStringPtrRelease(cefStrPtr) }
         let cefValue = value?.toCEF()
         return cefObject.set_preference(cefObjectPtr, cefStrPtr, cefValue, nil) != 0
     }
-
+     */
+    
     /// Clears all certificate exceptions that were added as part of handling
     /// CefRequestHandler::OnCertificateError(). If you call this it is
     /// recommended that you also call CloseAllConnections() or you risk not
@@ -204,7 +202,7 @@ public extension CEFRequestContext {
     /// If |callback| is non-NULL it will be executed on the UI thread after
     /// completion.
     /// CEF name: `ClearCertificateExceptions`
-    public func clearCertificateExceptions(callback: CEFCompletionCallback? = nil) {
+    func clearCertificateExceptions(callback: CEFCompletionCallback? = nil) {
         let cefCallbackPtr = callback?.toCEF()
         cefObject.clear_certificate_exceptions(cefObjectPtr, cefCallbackPtr)
     }
@@ -223,7 +221,7 @@ public extension CEFRequestContext {
     /// don't yet want to call CefShutdown(). If |callback| is non-NULL it will be
     /// executed on the UI thread after completion.
     /// CEF name: `CloseAllConnections`
-    public func closeAllConnections(callback: CEFCompletionCallback? = nil) {
+    func closeAllConnections(callback: CEFCompletionCallback? = nil) {
         let cefCallbackPtr = callback?.toCEF()
         cefObject.close_all_connections(cefObjectPtr, cefCallbackPtr)
     }
@@ -231,7 +229,7 @@ public extension CEFRequestContext {
     /// Attempts to resolve |origin| to a list of associated IP addresses.
     /// |callback| will be executed on the UI thread after completion.
     /// CEF name: `ResolveHost`
-    public func resolveHost(_ hostName: String, callback: CEFResolveCallback) {
+    func resolveHost(_ hostName: String, callback: CEFResolveCallback) {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(hostName)
         defer { CEFStringPtrRelease(cefStrPtr) }
         cefObject.resolve_host(cefObjectPtr, cefStrPtr, callback.toCEF())
@@ -281,7 +279,7 @@ public extension CEFRequestContext {
     /// See https://developer.chrome.com/extensions for extension implementation
     /// and usage documentation.
     /// CEF name: `LoadExtension`
-    public func loadExtension(at path: String, manifest: CEFDictionaryValue?, handler: CEFExtensionHandler?) {
+    func loadExtension(at path: String, manifest: CEFDictionaryValue?, handler: CEFExtensionHandler?) {
         let cefStr = CEFStringPtrCreateFromSwiftString(path)
         defer { CEFStringPtrRelease(cefStr) }
         cefObject.load_extension(cefObjectPtr, cefStr, manifest?.toCEF(), handler?.toCEF())
@@ -292,7 +290,7 @@ public extension CEFRequestContext {
     /// access to the extension (see HasExtension). This method must be called on
     /// the browser process UI thread.
     /// CEF name: `DidLoadExtension`
-    public func didLoadExtension(identifier: CEFExtension.Identifier) -> Bool {
+    func didLoadExtension(identifier: CEFExtension.Identifier) -> Bool {
         let cefStr = CEFStringPtrCreateFromSwiftString(identifier)
         defer { CEFStringPtrRelease(cefStr) }
         return cefObject.did_load_extension(cefObjectPtr, cefStr) != 0
@@ -303,7 +301,7 @@ public extension CEFRequestContext {
     /// extension (see DidLoadExtension). This method must be called on the browser
     /// process UI thread.
     /// CEF name: `HasExtension`
-    public func hasExtension(identifier: CEFExtension.Identifier) -> Bool {
+    func hasExtension(identifier: CEFExtension.Identifier) -> Bool {
         let cefStr = CEFStringPtrCreateFromSwiftString(identifier)
         defer { CEFStringPtrRelease(cefStr) }
         return cefObject.has_extension(cefObjectPtr, cefStr) != 0
@@ -314,7 +312,7 @@ public extension CEFRequestContext {
     /// ID values. Returns true on success. This method must be called on the
     /// browser process UI thread.
     /// CEF name: `GetExtensions`
-    public var extensionIDs: [CEFExtension.Identifier]? {
+    var extensionIDs: [CEFExtension.Identifier]? {
         let cefList = cef_string_list_alloc()!
         defer { CEFStringListRelease(cefList) }
 
@@ -329,7 +327,7 @@ public extension CEFRequestContext {
     /// extension is accessible in this context (see HasExtension). This method
     /// must be called on the browser process UI thread.
     /// CEF name: `GetExtension`
-    public func `extension`(for identifier: CEFExtension.Identifier) -> CEFExtension? {
+    func `extension`(for identifier: CEFExtension.Identifier) -> CEFExtension? {
         let cefStr = CEFStringPtrCreateFromSwiftString(identifier)
         defer { CEFStringPtrRelease(cefStr) }
         let cefExt = cefObject.get_extension(cefObjectPtr, cefStr)
@@ -340,7 +338,7 @@ public extension CEFRequestContext {
     /// is non-NULL it will be executed asnychronously on the UI thread after the
     /// manager's context has been initialized.
     /// CEF name: `GetMediaRouter`
-    public func getMediaRouter(callback: CEFCompletionCallback? = nil) -> CEFMediaRouter? {
+    func getMediaRouter(callback: CEFCompletionCallback? = nil) -> CEFMediaRouter? {
         let cefCallbackPtr = callback?.toCEF()
         let cefRouter = cefObject.get_media_router(cefObjectPtr, cefCallbackPtr)
         return CEFMediaRouter.fromCEF(cefRouter)
@@ -353,7 +351,7 @@ public extension CEFRequestContext {
     /// will be executed asnychronously on the UI thread after the manager's
     /// storage has been initialized.
     /// CEF name: `GetCookieManager`
-    public func getCookieManager(block: @escaping CEFCompletionCallbackOnCompleteBlock) -> CEFCookieManager? {
+    func getCookieManager(block: @escaping CEFCompletionCallbackOnCompleteBlock) -> CEFCookieManager? {
         return getCookieManager(with: CEFCompletionCallbackBridge(block: block))
     }
     
@@ -364,7 +362,7 @@ public extension CEFRequestContext {
     /// If |callback| is non-NULL it will be executed on the UI thread after
     /// completion.
     /// CEF name: `ClearCertificateExceptions`
-    public func clearCertificateExceptions(block: @escaping CEFCompletionCallbackOnCompleteBlock) {
+    func clearCertificateExceptions(block: @escaping CEFCompletionCallbackOnCompleteBlock) {
         clearCertificateExceptions(callback: CEFCompletionCallbackBridge(block: block))
     }
     
@@ -373,14 +371,14 @@ public extension CEFRequestContext {
     /// don't yet want to call CefShutdown(). If |callback| is non-NULL it will be
     /// executed on the UI thread after completion.
     /// CEF name: `CloseAllConnections`
-    public func closeAllConnections(block: @escaping CEFCompletionCallbackOnCompleteBlock) {
+    func closeAllConnections(block: @escaping CEFCompletionCallbackOnCompleteBlock) {
         closeAllConnections(callback: CEFCompletionCallbackBridge(block: block))
     }
     
     /// Attempts to resolve |origin| to a list of associated IP addresses.
     /// |callback| will be executed on the UI thread after completion.
     /// CEF name: `ResolveHost`
-    public func resolveHost(hostName: String, block: @escaping CEFResolveCallbackOnResolveCompletedBlock) {
+    func resolveHost(hostName: String, block: @escaping CEFResolveCallbackOnResolveCompletedBlock) {
         resolveHost(hostName, callback: CEFResolveCallbackBridge(block: block))
     }
 
@@ -388,7 +386,7 @@ public extension CEFRequestContext {
     /// is non-NULL it will be executed asnychronously on the UI thread after the
     /// manager's context has been initialized.
     /// CEF name: `GetMediaRouter`
-    public func getMediaRouter(block: @escaping CEFCompletionCallbackOnCompleteBlock) -> CEFMediaRouter? {
+    func getMediaRouter(block: @escaping CEFCompletionCallbackOnCompleteBlock) -> CEFMediaRouter? {
         return getMediaRouter(callback: CEFCompletionCallbackBridge(block: block))
     }
 }

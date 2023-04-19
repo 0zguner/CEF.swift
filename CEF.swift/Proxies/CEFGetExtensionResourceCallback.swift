@@ -12,13 +12,13 @@ public extension CEFGetExtensionResourceCallback {
     
     /// Continue the request. Read the resource contents from |stream|.
     /// CEF name: `Continue`
-    public func doContinue(stream: CEFStreamReader?) {
+    func doContinue(stream: CEFStreamReader?) {
         cefObject.cont(cefObjectPtr, stream?.toCEF())
     }
     
     /// Cancel the request.
     /// CEF name: `Cancel`
-    public func doCancel() {
+    func doCancel() {
         cefObject.cancel(cefObjectPtr)
     }
     

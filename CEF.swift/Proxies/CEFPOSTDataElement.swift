@@ -12,25 +12,25 @@ public extension CEFPOSTDataElement {
 
     /// Create a new CefPostDataElement object.
     /// CEF name: `Create`
-    public convenience init?() {
+    convenience init?() {
         self.init(ptr: cef_post_data_element_create())
     }
     
     /// Returns true if this object is read-only.
     /// CEF name: `IsReadOnly`
-    public var isReadOnly: Bool {
+    var isReadOnly: Bool {
         return cefObject.is_read_only(cefObjectPtr) != 0
     }
 
     /// Remove all contents from the post data element.
     /// CEF name: `SetToEmpty`
-    public func setToEmpty() {
+    func setToEmpty() {
         cefObject.set_to_empty(cefObjectPtr)
     }
     
     /// The post data element will represent a file.
     /// CEF name: `SetToFile`
-    public func setToFile(fileName: String) {
+    func setToFile(fileName: String) {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(fileName)
         defer { CEFStringPtrRelease(cefStrPtr) }
         cefObject.set_to_file(cefObjectPtr, cefStrPtr)
@@ -39,22 +39,22 @@ public extension CEFPOSTDataElement {
     /// The post data element will represent bytes.  The bytes passed
     /// in will be copied.
     /// CEF name: `SetToBytes`
-    public func setToBytes(data: Data) {
-        data.withUnsafeBytes { buffer in
-            cefObject.set_to_bytes(cefObjectPtr, data.count, buffer)
+    func setToBytes(data: Data) {
+        withUnsafeBytes(of: data) { buffer in
+            cefObject.set_to_bytes(cefObjectPtr, data.count, buffer.baseAddress)
         }
     }
     
     /// Return the type of this post data element.
     /// CEF name: `GetType`
-    public var type: CEFPOSTDataElementType {
+    var type: CEFPOSTDataElementType {
         let cefType = cefObject.get_type(cefObjectPtr)
         return CEFPOSTDataElementType.fromCEF(cefType)
     }
     
     /// Return the file name.
     /// CEF name: `GetFile`
-    public var fileName: String? {
+    var fileName: String? {
         let cefStrPtr = cefObject.get_file(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr)
@@ -62,19 +62,19 @@ public extension CEFPOSTDataElement {
     
     /// Return the number of bytes.
     /// CEF name: `GetBytesCount`
-    public var size: size_t {
+    var size: size_t {
         return cefObject.get_bytes_count(cefObjectPtr)
     }
     
     /// Read up to |size| bytes into |bytes| and return the number of bytes
     /// actually read.
     /// CEF name: `GetBytes`
-    public func data(upToLength maxLength: size_t) -> Data {
+    func data(upToLength maxLength: size_t) -> Data {
         var data = Data(count: maxLength)
-        let actualSize = data.withUnsafeMutableBytes { buffer in
-             return cefObject.get_bytes(cefObjectPtr, maxLength, buffer)
+        let actualSize = withUnsafeMutableBytes(of: &data) { buffer in
+            cefObject.get_bytes(cefObjectPtr, maxLength, buffer.baseAddress)
         }
-        
+
         data.count = actualSize
         return data
     }

@@ -32,17 +32,6 @@ func CEFResourceHandler_open(ptr: UnsafeMutablePointer<cef_resource_handler_t>?,
     }
 }
 
-func CEFResourceHandler_process_request(ptr: UnsafeMutablePointer<cef_resource_handler_t>?,
-                                        request: UnsafeMutablePointer<cef_request_t>?,
-                                        callback: UnsafeMutablePointer<cef_callback_t>?) -> Int32 {
-    guard let obj = CEFResourceHandlerMarshaller.get(ptr) else {
-        return 0
-    }
-    
-    let action = obj.onProcessRequest(request: CEFRequest.fromCEF(request)!, callback: CEFCallback.fromCEF(callback)!)
-    return action == .allow ? 1 : 0
-}
-
 func CEFResourceHandler_get_response_headers(ptr: UnsafeMutablePointer<cef_resource_handler_t>?,
                                              response: UnsafeMutablePointer<cef_response_t>?,
                                              responseLength: UnsafeMutablePointer<Int64>?,
@@ -114,32 +103,6 @@ func CEFResourceHandler_read(ptr: UnsafeMutablePointer<cef_resource_handler_t>?,
         return 0
     case .failure(let error):
         actualLength?.pointee = error.rawValue
-        return 0
-    }
-}
-
-
-func CEFResourceHandler_read_response(ptr: UnsafeMutablePointer<cef_resource_handler_t>?,
-                                      buffer: UnsafeMutableRawPointer?,
-                                      bufferLength: Int32,
-                                      actualLength: UnsafeMutablePointer<Int32>?,
-                                      callback: UnsafeMutablePointer<cef_callback_t>?) -> Int32 {
-    guard let obj = CEFResourceHandlerMarshaller.get(ptr) else {
-        return 0
-    }
-    
-    let action = obj.onReadResponse(buffer: buffer!,
-                                    bufferLength: Int(bufferLength),
-                                    callback: CEFCallback.fromCEF(callback)!)
-    
-    switch action {
-    case .read(let length):
-        actualLength!.pointee = Int32(length)
-        return 1
-    case .readAsync:
-        actualLength!.pointee = 0
-        return 1
-    case .complete:
         return 0
     }
 }

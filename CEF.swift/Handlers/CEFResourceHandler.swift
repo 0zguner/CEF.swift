@@ -93,17 +93,6 @@ public protocol CEFResourceHandler {
     /// CEF name: `Open`
     func onOpenResponseStream(request: CEFRequest, callback: CEFCallback) -> CEFOnOpenResponseStreamAction
 
-    /// Begin processing the request. To handle the request return true and call
-    /// CefCallback::Continue() once the response header information is available
-    /// (CefCallback::Continue() can also be called from inside this method if
-    /// header information is available immediately). To cancel the request return
-    /// false.
-    ///
-    /// WARNING: This method is deprecated. Use Open instead.
-    /// CEF name: `ProcessRequest`
-    @available(*, deprecated, message: "Use onOpenResponseStream instead")
-    func onProcessRequest(request: CEFRequest, callback: CEFCallback) -> CEFOnProcessRequestAction
-
     /// Retrieve response header information. If the response length is not known
     /// set |response_length| to -1 and ReadResponse() will be called until it
     /// returns false. If the response length is known set |response_length|
@@ -145,19 +134,6 @@ public protocol CEFResourceHandler {
     func onReadResponseData(buffer: UnsafeMutableRawPointer,
                             bufferLength: Int,
                             callback: CEFResourceReadCallback) -> CEFOnReadResponseDataAction
-
-    /// Read response data. If data is available immediately copy up to
-    /// |bytes_to_read| bytes into |data_out|, set |bytes_read| to the number of
-    /// bytes copied, and return true. To read the data at a later time set
-    /// |bytes_read| to 0, return true and call CefCallback::Continue() when the
-    /// data is available. To indicate response completion return false.
-    ///
-    /// WARNING: This method is deprecated. Use Skip and Read instead.
-    /// CEF name: `ReadResponse`
-    @available(*, deprecated, message: "Use Skip and Read instead")
-    func onReadResponse(buffer: UnsafeMutableRawPointer,
-                        bufferLength: Int,
-                        callback: CEFCallback) -> CEFOnReadResponseAction
     
     /// Request processing has been canceled.
     /// CEF name: `Cancel`
@@ -186,12 +162,6 @@ public extension CEFResourceHandler {
     func onReadResponseData(buffer: UnsafeMutableRawPointer,
                             bufferLength: Int,
                             callback: CEFCallback) -> CEFOnReadResponseDataAction {
-        return .complete
-    }
-
-    func onReadResponse(buffer: UnsafeMutableRawPointer,
-                        bufferLength: Int,
-                        callback: CEFCallback) -> CEFOnReadResponseAction {
         return .complete
     }
     

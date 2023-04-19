@@ -18,7 +18,7 @@ public struct CEFURIUnescapeRule: OptionSet {
 
     /// Don't unescape anything at all.
     /// CEF name: `UU_NONE`.
-    public static let none = CEFURIUnescapeRule(rawValue: 0)
+    public static let none = CEFURIUnescapeRule([])
 
     /// Don't unescape anything special, but all normal unescaping will happen.
     /// This is a placeholder and can't be combined with other flags (since it's

@@ -19,7 +19,7 @@ public struct CEFJSONParserOptions: OptionSet {
     /// Parses the input strictly according to RFC 4627. See comments in Chromium's
     /// base/json/json_reader.h file for known limitations/deviations from the RFC.
     /// CEF name: `JSON_PARSER_RFC`.
-    public static let rfc = CEFJSONParserOptions(rawValue: 0)
+    public static let rfc = CEFJSONParserOptions([])
 
     /// Allows commas to exist after the last element in structures.
     /// CEF name: `JSON_PARSER_ALLOW_TRAILING_COMMAS`.

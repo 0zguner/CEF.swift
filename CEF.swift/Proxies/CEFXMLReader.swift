@@ -13,7 +13,7 @@ public extension CEFXMLReader {
     /// Create a new CefXmlReader object. The returned object's methods can only
     /// be called from the thread that created the object.
     /// CEF name: `Create`
-    public convenience init?(stream: CEFStreamReader, encoding: CEFXMLEncodingType, uri: URL) {
+    convenience init?(stream: CEFStreamReader, encoding: CEFXMLEncodingType, uri: URL) {
         let cefURLPtr = CEFStringPtrCreateFromSwiftString(uri.absoluteString)
         defer { CEFStringPtrRelease(cefURLPtr) }
         self.init(ptr: cef_xml_reader_create(stream.toCEF(), encoding.toCEF(), cefURLPtr))
@@ -24,7 +24,7 @@ public extension CEFXMLReader {
     /// the cursor position was set successfully.
     /// CEF name: `MoveToNextNode`
     @discardableResult
-    public func moveToNextNode() -> Bool {
+    func moveToNextNode() -> Bool {
         return cefObject.move_to_next_node(cefObjectPtr) != 0
     }
 
@@ -32,19 +32,19 @@ public extension CEFXMLReader {
     /// occurs on the correct thread.
     /// CEF name: `Close`
     @discardableResult
-    public func close() -> Bool {
+    func close() -> Bool {
         return cefObject.close(cefObjectPtr) != 0
     }
 
     /// Returns true if an error has been reported by the XML parser.
     /// CEF name: `HasError`
-    public var hasError: Bool {
+    var hasError: Bool {
         return cefObject.has_error(cefObjectPtr) != 0
     }
 
     /// Returns the error string.
     /// CEF name: `GetError`
-    public var errorString: String? {
+    var errorString: String? {
         let cefStrPtr = cefObject.get_error(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr)
@@ -55,21 +55,21 @@ public extension CEFXMLReader {
     
     /// Returns the node type.
     /// CEF name: `GetType`
-    public var type: CEFXMLNodeType {
+    var type: CEFXMLNodeType {
         let cefType = cefObject.get_type(cefObjectPtr)
         return CEFXMLNodeType.fromCEF(cefType)
     }
 
     /// Returns the node depth. Depth starts at 0 for the root node.
     /// CEF name: `GetDepth`
-    public var depth: Int {
+    var depth: Int {
         return Int(cefObject.get_depth(cefObjectPtr))
     }
 
     /// Returns the local name. See
     /// http://www.w3.org/TR/REC-xml-names/#NT-LocalPart for additional details.
     /// CEF name: `GetLocalName`
-    public var localName: String {
+    var localName: String {
         let cefStrPtr = cefObject.get_local_name(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringToSwiftString(cefStrPtr!.pointee)
@@ -78,7 +78,7 @@ public extension CEFXMLReader {
     /// Returns the namespace prefix. See http://www.w3.org/TR/REC-xml-names/ for
     /// additional details.
     /// CEF name: `GetPrefix`
-    public var prefix: String? {
+    var prefix: String? {
         let cefStrPtr = cefObject.get_prefix(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr)
@@ -87,7 +87,7 @@ public extension CEFXMLReader {
     /// Returns the qualified name, equal to (Prefix:)LocalName. See
     /// http://www.w3.org/TR/REC-xml-names/#ns-qualnames for additional details.
     /// CEF name: `GetQualifiedName`
-    public var qualifiedName: String {
+    var qualifiedName: String {
         let cefStrPtr = cefObject.get_qualified_name(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringToSwiftString(cefStrPtr!.pointee)
@@ -96,7 +96,7 @@ public extension CEFXMLReader {
     /// Returns the URI defining the namespace associated with the node. See
     /// http://www.w3.org/TR/REC-xml-names/ for additional details.
     /// CEF name: `GetNamespaceURI`
-    public var namespaceURI: URL? {
+    var namespaceURI: URL? {
         let cefStrPtr = cefObject.get_namespace_uri(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         guard let str = CEFStringPtrToSwiftString(cefStrPtr) else {
@@ -108,7 +108,7 @@ public extension CEFXMLReader {
     /// Returns the base URI of the node. See http://www.w3.org/TR/xmlbase/ for
     /// additional details.
     /// CEF name: `GetBaseURI`
-    public var baseURI: URL? {
+    var baseURI: URL? {
         let cefStrPtr = cefObject.get_base_uri(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         guard let str = CEFStringPtrToSwiftString(cefStrPtr) else {
@@ -120,7 +120,7 @@ public extension CEFXMLReader {
     /// Returns the xml:lang scope within which the node resides. See
     /// http://www.w3.org/TR/REC-xml/#sec-lang-tag for additional details.
     /// CEF name: `GetXmlLang`
-    public var xmlLang: String? {
+    var xmlLang: String? {
         let cefStrPtr = cefObject.get_xml_lang(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr)
@@ -129,19 +129,19 @@ public extension CEFXMLReader {
     /// Returns true if the node represents an empty element. <a/> is considered
     /// empty but <a></a> is not.
     /// CEF name: `IsEmptyElement`
-    public var isEmptyElement: Bool {
+    var isEmptyElement: Bool {
         return cefObject.is_empty_element(cefObjectPtr) != 0
     }
     
     /// Returns true if the node has a text value.
     /// CEF name: `HasValue`
-    public var hasValue: Bool {
+    var hasValue: Bool {
         return cefObject.has_value(cefObjectPtr) != 0
     }
 
     /// Returns the text value.
     /// CEF name: `GetValue`
-    public var value: String {
+    var value: String {
         let cefStrPtr = cefObject.get_value(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr, defaultValue: "")
@@ -149,19 +149,19 @@ public extension CEFXMLReader {
     
     /// Returns true if the node has attributes.
     /// CEF name: `HasAttributes`
-    public var hasAttributes: Bool {
+    var hasAttributes: Bool {
         return cefObject.has_attributes(cefObjectPtr) != 0
     }
 
     /// Returns the number of attributes.
     /// CEF name: `GetAttributeCount`
-    public func attributeCount() -> size_t {
+    func attributeCount() -> size_t {
         return cefObject.get_attribute_count(cefObjectPtr)
     }
 
     /// Returns the value of the attribute at the specified 0-based index.
     /// CEF name: `GetAttribute`
-    public func attribute(at index: Int) -> String? {
+    func attribute(at index: Int) -> String? {
         let cefStrPtr = cefObject.get_attribute_byindex(cefObjectPtr, Int32(index))
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr)
@@ -169,7 +169,7 @@ public extension CEFXMLReader {
     
     /// Returns the value of the attribute with the specified qualified name.
     /// CEF name: `GetAttribute`
-    public func attribute(for qualifiedName: String) -> String? {
+    func attribute(for qualifiedName: String) -> String? {
         let cefNamePtr = CEFStringPtrCreateFromSwiftString(qualifiedName)
         let cefStrPtr = cefObject.get_attribute_byqname(cefObjectPtr, cefNamePtr)
         defer {
@@ -182,7 +182,7 @@ public extension CEFXMLReader {
     /// Returns the value of the attribute with the specified local name and
     /// namespace URI.
     /// CEF name: `GetAttribute`
-    public func attribute(for name: String, namespaceURI: URL) -> String? {
+    func attribute(for name: String, namespaceURI: URL) -> String? {
         let cefNamePtr = CEFStringPtrCreateFromSwiftString(name)
         let cefURIPtr = CEFStringPtrCreateFromSwiftString(namespaceURI.absoluteString)
         let cefStrPtr = cefObject.get_attribute_bylname(cefObjectPtr, cefNamePtr, cefURIPtr)
@@ -196,7 +196,7 @@ public extension CEFXMLReader {
     
     /// Returns an XML representation of the current node's children.
     /// CEF name: `GetInnerXml`
-    public var innerXML: String {
+    var innerXML: String {
         let cefStrPtr = cefObject.get_inner_xml(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr, defaultValue: "")
@@ -204,7 +204,7 @@ public extension CEFXMLReader {
     
     /// Returns an XML representation of the current node including its children.
     /// CEF name: `GetOuterXml`
-    public var outerXML: String {
+    var outerXML: String {
         let cefStrPtr = cefObject.get_outer_xml(cefObjectPtr)
         defer { CEFStringPtrRelease(cefStrPtr) }
         return CEFStringPtrToSwiftString(cefStrPtr, defaultValue: "")
@@ -212,7 +212,7 @@ public extension CEFXMLReader {
     
     /// Returns the line number for the current node.
     /// CEF name: `GetLineNumber`
-    public var lineNumber: Int {
+    var lineNumber: Int {
         return Int(cefObject.get_line_number(cefObjectPtr))
     }
 
@@ -225,7 +225,7 @@ public extension CEFXMLReader {
     /// true if the cursor position was set successfully.
     /// CEF name: `MoveToAttribute`
     @discardableResult
-    public func moveToAttribute(at index: Int) -> Bool {
+    func moveToAttribute(at index: Int) -> Bool {
         return cefObject.move_to_attribute_byindex(cefObjectPtr, Int32(index)) != 0
     }
 
@@ -233,7 +233,7 @@ public extension CEFXMLReader {
     /// Returns true if the cursor position was set successfully.
     /// CEF name: `MoveToAttribute`
     @discardableResult
-    public func moveToAttribute(_ qualifiedName: String) -> Bool {
+    func moveToAttribute(_ qualifiedName: String) -> Bool {
         let cefNamePtr = CEFStringPtrCreateFromSwiftString(qualifiedName)
         defer { CEFStringPtrRelease(cefNamePtr) }
         return cefObject.move_to_attribute_byqname(cefObjectPtr, cefNamePtr) != 0
@@ -243,7 +243,7 @@ public extension CEFXMLReader {
     /// namespace URI. Returns true if the cursor position was set successfully.
     /// CEF name: `MoveToAttribute`
     @discardableResult
-    public func moveToAttribute(_ name: String, namespaceURI: URL) -> Bool {
+    func moveToAttribute(_ name: String, namespaceURI: URL) -> Bool {
         let cefNamePtr = CEFStringPtrCreateFromSwiftString(name)
         let cefURIPtr = CEFStringPtrCreateFromSwiftString(namespaceURI.absoluteString)
         defer {
@@ -257,7 +257,7 @@ public extension CEFXMLReader {
     /// true if the cursor position was set successfully.
     /// CEF name: `MoveToFirstAttribute`
     @discardableResult
-    public func moveToFirstAttribute() -> Bool {
+    func moveToFirstAttribute() -> Bool {
         return cefObject.move_to_first_attribute(cefObjectPtr) != 0
     }
 
@@ -265,7 +265,7 @@ public extension CEFXMLReader {
     /// true if the cursor position was set successfully.
     /// CEF name: `MoveToNextAttribute`
     @discardableResult
-    public func moveToNextAttribute() -> Bool {
+    func moveToNextAttribute() -> Bool {
         return cefObject.move_to_next_attribute(cefObjectPtr) != 0
     }
     
@@ -273,7 +273,7 @@ public extension CEFXMLReader {
     /// position was set successfully.
     /// CEF name: `MoveToCarryingElement`
     @discardableResult
-    public func moveToCarryingElement() -> Bool {
+    func moveToCarryingElement() -> Bool {
         return cefObject.move_to_carrying_element(cefObjectPtr) != 0
     }
 

@@ -21,7 +21,7 @@ public extension CEFBrowserHost {
     /// render process.
     /// CEF name: `CreateBrowser`
     @discardableResult
-    public static func createBrowser(windowInfo: CEFWindowInfo,
+    static func createBrowser(windowInfo: CEFWindowInfo,
                                      client: CEFClient? = nil,
                                      url: URL? = nil,
                                      settings: CEFBrowserSettings,
@@ -55,7 +55,7 @@ public extension CEFBrowserHost {
     /// specific to the created browser that will be passed to
     /// CefRenderProcessHandler::OnBrowserCreated() in the render process.
     /// CEF name: `CreateBrowserSync`
-    public static func createBrowserSync(windowInfo: CEFWindowInfo,
+    static func createBrowserSync(windowInfo: CEFWindowInfo,
                                          client: CEFClient? = nil,
                                          url: URL? = nil,
                                          settings: CEFBrowserSettings,
@@ -85,7 +85,7 @@ public extension CEFBrowserHost {
 
     /// Returns the hosted browser object.
     /// CEF name: `GetBrowser`
-    public var browser: CEFBrowser? {
+    var browser: CEFBrowser? {
         // TODO: audit nonnull
         let cefBrowser = cefObject.get_browser(cefObjectPtr)
         return CEFBrowser.fromCEF(cefBrowser)
@@ -100,7 +100,7 @@ public extension CEFBrowserHost {
     /// CefLifeSpanHandler::DoClose() documentation for additional usage
     /// information.
     /// CEF name: `CloseBrowser`
-    public func closeBrowser(force: Bool) {
+    func closeBrowser(force: Bool) {
         cefObject.close_browser(cefObjectPtr, force ? 1 : 0)
     }
 
@@ -111,13 +111,13 @@ public extension CEFBrowserHost {
     /// CefLifeSpanHandler::DoClose() documentation for additional usage
     /// information. This method must be called on the browser process UI thread.
     /// CEF name: `TryCloseBrowser`
-    public func tryCloseBrowser() -> Bool {
+    func tryCloseBrowser() -> Bool {
         return cefObject.try_close_browser(cefObjectPtr) != 0
     }
     
     /// Set whether the browser is focused.
     /// CEF name: `SetFocus`
-    public func setIsFocused(_ focused: Bool) {
+    func setIsFocused(_ focused: Bool) {
         cefObject.set_focus(cefObjectPtr, focused ? 1 : 0)
     }
 
@@ -126,7 +126,7 @@ public extension CEFBrowserHost {
     /// process UI thread and it will return the handle for the top-level native
     /// window.
     /// CEF name: `GetWindowHandle`
-    public var windowHandle: CEFWindowHandle? {
+    var windowHandle: CEFWindowHandle? {
         if let rawHandle = cefObject.get_window_handle(cefObjectPtr) {
             return Unmanaged<CEFWindowHandle>.fromOpaque(rawHandle).takeUnretainedValue()
         }
@@ -138,7 +138,7 @@ public extension CEFBrowserHost {
     /// wrapped in a CefBrowserView. This method can be used in combination with
     /// custom handling of modal windows.
     /// CEF name: `GetOpenerWindowHandle`
-    public var openerWindowHandle: CEFWindowHandle? {
+    var openerWindowHandle: CEFWindowHandle? {
         if let rawHandle = cefObject.get_opener_window_handle(cefObjectPtr) {
             return Unmanaged<CEFWindowHandle>.fromOpaque(rawHandle).takeUnretainedValue()
         }
@@ -147,13 +147,13 @@ public extension CEFBrowserHost {
     
     /// Returns true if this browser is wrapped in a CefBrowserView.
     /// CEF name: `HasView`
-    public var hasView: Bool {
+    var hasView: Bool {
         return cefObject.has_view(cefObjectPtr) != 0
     }
     
     /// Returns the client for this browser.
     /// CEF name: `GetClient`
-    public var client: CEFClient? {
+    var client: CEFClient? {
         // TODO: audit nonnull
         if let cefClient = cefObject.get_client(cefObjectPtr) {
             return CEFClientMarshaller.take(cefClient)
@@ -163,7 +163,7 @@ public extension CEFBrowserHost {
 
     /// Returns the request context for this browser.
     /// CEF name: `GetRequestContext`
-    public var requestContext: CEFRequestContext? {
+    var requestContext: CEFRequestContext? {
         // TODO: audit nonnull
         if let cefCtx = cefObject.get_request_context(cefObjectPtr) {
             return CEFRequestContext.fromCEF(cefCtx)
@@ -183,9 +183,9 @@ public extension CEFBrowserHost {
     /// immediately. Otherwise, the change will be applied asynchronously on the
     /// UI thread.
     /// CEF name: `GetZoomLevel`, `SetZoomLevel`
-    public var zoomLevel: Double {
+    var zoomLevel: Double {
         get { return cefObject.get_zoom_level(cefObjectPtr) }
-        set { cefObject.set_zoom_level(cefObjectPtr, zoomLevel) }
+        set { cefObject.set_zoom_level(cefObjectPtr, newValue) }
     }
     
     /// Call to run a file chooser dialog. Only a single file chooser dialog may be
@@ -203,11 +203,10 @@ public extension CEFBrowserHost {
     /// dismissed or immediately if another dialog is already pending. The dialog
     /// will be initiated asynchronously on the UI thread.
     /// CEF name: `RunFileDialog`
-    public func runFileDialog(mode: CEFFileDialogMode,
+    func runFileDialog(mode: CEFFileDialogMode,
                               title: String?,
                               defaultPath: String?,
                               acceptFilters: [String],
-                              selectedFilterIndex: Int,
                               callback: CEFRunFileDialogCallback) {
         let cefTitle = CEFStringPtrCreateFromSwiftString(title ?? "")
         let cefPath = CEFStringPtrCreateFromSwiftString(defaultPath ?? "")
@@ -224,13 +223,12 @@ public extension CEFBrowserHost {
                                   cefTitle,
                                   cefPath,
                                   cefFilterList,
-                                  Int32(selectedFilterIndex),
                                   callback.toCEF())
     }
     
     /// Download the file at |url| using CefDownloadHandler.
     /// CEF name: `StartDownload`
-    public func startDownload(url: URL) {
+    func startDownload(url: URL) {
         let cefURLPtr = CEFStringPtrCreateFromSwiftString(url.absoluteString)
         defer { CEFStringPtrRelease(cefURLPtr) }
         cefObject.start_download(cefObjectPtr, cefURLPtr)
@@ -247,7 +245,7 @@ public extension CEFBrowserHost {
     /// unlimited. If |bypass_cache| is true then |image_url| is requested from the
     /// server even if it is present in the browser cache.
     /// CEF name: `DownloadImage`
-    public func downloadImage(url: URL,
+    func downloadImage(url: URL,
                        isFavicon: Bool,
                        maxImageSize: UInt32,
                        bypassCache: Bool,
@@ -264,7 +262,7 @@ public extension CEFBrowserHost {
 
     /// Print the current browser contents.
     /// CEF name: `Print`
-    public func print() {
+    func print() {
         cefObject.print(cefObjectPtr)
     }
 
@@ -273,7 +271,7 @@ public extension CEFBrowserHost {
     /// |path| when done. For PDF printing to work on Linux you must implement the
     /// CefPrintHandler::GetPdfPaperSize method.
     /// CEF name: `PrintToPDF`
-    public func printToPDF(at path: String, settings: CEFPDFPrintSettings, callback: CEFPDFPrintCallback? = nil) {
+    func printToPDF(at path: String, settings: CEFPDFPrintSettings, callback: CEFPDFPrintCallback? = nil) {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(path)
         var cefSettings = settings.toCEF()
         defer {
@@ -293,15 +291,15 @@ public extension CEFBrowserHost {
     /// instance, if any, returned via CefClient::GetFindHandler will be called to
     /// report find results.
     /// CEF name: `Find`
-    public func find(identifier: CEFFindIdentifier, searchText: String, forward: Bool, caseSensitive: Bool, findNext: Bool) {
+    func find(searchText: String, forward: Bool, caseSensitive: Bool, findNext: Bool) {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(searchText)
         defer { CEFStringPtrRelease(cefStrPtr) }
-        cefObject.find(cefObjectPtr, identifier, cefStrPtr, forward ? 1 : 0, caseSensitive ? 1 : 0, findNext ? 1 : 0)
+        cefObject.find(cefObjectPtr, cefStrPtr, forward ? 1 : 0, caseSensitive ? 1 : 0, findNext ? 1 : 0)
     }
     
     /// Cancel all searches that are currently going on.
     /// CEF name: `StopFinding`
-    public func stopFinding(clearSelection: Bool) {
+    func stopFinding(clearSelection: Bool) {
         cefObject.stop_finding(cefObjectPtr, clearSelection ? 1 : 0)
     }
     
@@ -313,7 +311,7 @@ public extension CEFBrowserHost {
     /// inspected. The |windowInfo| parameter will be ignored if this browser is
     /// wrapped in a CefBrowserView.
     /// CEF name: `ShowDevTools`
-    public func showDevTools(windowInfo: CEFWindowInfo,
+    func showDevTools(windowInfo: CEFWindowInfo,
                              client: CEFClient,
                              settings: CEFBrowserSettings,
                              inspectionPoint: NSPoint?) {
@@ -336,14 +334,14 @@ public extension CEFBrowserHost {
     
     /// Explicitly close the associated DevTools browser, if any.
     /// CEF name: `CloseDevTools`
-    public func closeDevTools() {
+    func closeDevTools() {
         cefObject.close_dev_tools(cefObjectPtr)
     }
 
     // Returns true if this browser currently has an associated DevTools browser.
     // Must be called on the browser process UI thread.
     /// CEF name: `HasDevTools`
-    public var hasDevTools: Bool {
+    var hasDevTools: Bool {
         return cefObject.has_dev_tools(cefObjectPtr) != 0
     }
     
@@ -379,9 +377,9 @@ public extension CEFBrowserHost {
     /// `--devtools-protocol-log-file=<path>` command-line flag.
     /// CEF name: `SendDevToolsMessage`
     @discardableResult
-    public func sendDevToolsMessage(_ message: Data) -> Bool {
-        return message.withUnsafeBytes { ptr in
-            return cefObject.send_dev_tools_message(cefObjectPtr, ptr, message.count)
+    func sendDevToolsMessage(_ message: Data) -> Bool {
+        return withUnsafeBytes(of: message) { ptr in
+            cefObject.send_dev_tools_message(cefObjectPtr, ptr.baseAddress, message.count)
         } != 0
     }
     
@@ -416,14 +414,14 @@ public extension CEFBrowserHost {
     /// specified visitor. If |current_only| is true only the current navigation
     /// entry will be sent, otherwise all navigation entries will be sent.
     /// CEF name: `GetNavigationEntries`
-    public func enumerateNavigationEntries(with visitor: CEFNavigationEntryVisitor, currentOnly: Bool) {
+    func enumerateNavigationEntries(with visitor: CEFNavigationEntryVisitor, currentOnly: Bool) {
         cefObject.get_navigation_entries(cefObjectPtr, visitor.toCEF(), currentOnly ? 1 : 0)
     }
     
     /// If a misspelled word is currently selected in an editable node calling
     /// this method will replace it with the specified |word|.
     /// CEF name: `ReplaceMisspelling`
-    public func replaceMisspelling(replacementWord: String) {
+    func replaceMisspelling(replacementWord: String) {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(replacementWord)
         defer { CEFStringPtrRelease(cefStrPtr) }
         cefObject.replace_misspelling(cefObjectPtr, cefStrPtr)
@@ -431,7 +429,7 @@ public extension CEFBrowserHost {
 
     /// Add the specified |word| to the spelling dictionary.
     /// CEF name: `AddWordToDictionary`
-    public func addWordToDictionary(word: String) {
+    func addWordToDictionary(word: String) {
         let cefStrPtr = CEFStringPtrCreateFromSwiftString(word)
         defer { CEFStringPtrRelease(cefStrPtr) }
         cefObject.add_word_to_dictionary(cefObjectPtr, cefStrPtr)
@@ -439,7 +437,7 @@ public extension CEFBrowserHost {
     
     /// Returns true if window rendering is enabled.
     /// CEF name: `IsWindowRenderingDisabled`
-    public var isWindowRenderingEnabled: Bool {
+    var isWindowRenderingEnabled: Bool {
         return cefObject.is_window_rendering_disabled(cefObjectPtr) == 0
     }
     
@@ -448,7 +446,7 @@ public extension CEFBrowserHost {
     /// CefRenderHandler::OnPaint asynchronously with the updated regions. This
     /// method is only used when window rendering is disabled.
     /// CEF name: `WasResized`
-    public func notifyWasResized() {
+    func notifyWasResized() {
         cefObject.was_resized(cefObjectPtr)
     }
     
@@ -456,7 +454,7 @@ public extension CEFBrowserHost {
     /// CefRenderHandler::OnPaint notification will stop when the browser is
     /// hidden. This method is only used when window rendering is disabled.
     /// CEF name: `WasHidden`
-    public func notifyWasHidden(hidden: Bool) {
+    func notifyWasHidden(hidden: Bool) {
         cefObject.was_hidden(cefObjectPtr, hidden ? 1 : 0)
     }
 
@@ -467,7 +465,7 @@ public extension CEFBrowserHost {
     /// current display. This method is only used when window rendering is
     /// disabled.
     /// CEF name: `NotifyScreenInfoChanged`
-    public func notifyScreenInfoChanged() {
+    func notifyScreenInfoChanged() {
         cefObject.notify_screen_info_changed(cefObjectPtr)
     }
 
@@ -475,20 +473,20 @@ public extension CEFBrowserHost {
     /// asynchronously. This method is only used when window rendering is
     /// disabled.
     /// CEF name: `Invalidate`
-    public func invalidate(element: CEFPaintElementType) {
+    func invalidate(element: CEFPaintElementType) {
         cefObject.invalidate(cefObjectPtr, element.toCEF())
     }
 
     /// Issue a BeginFrame request to Chromium.  Only valid when
     /// CefWindowInfo::external_begin_frame_enabled is set to true.
     /// CEF name: `SendExternalBeginFrame`
-    public func sendExternalBeginFrame() {
+    func sendExternalBeginFrame() {
         cefObject.send_external_begin_frame(cefObjectPtr);
     }
     
     /// Send a key event to the browser.
     /// CEF name: `SendKeyEvent`
-    public func sendKeyEvent(_ event: CEFKeyEvent) {
+    func sendKeyEvent(_ event: CEFKeyEvent) {
         var cefEvent = event.toCEF()
         cefObject.send_key_event(cefObjectPtr, &cefEvent)
     }
@@ -496,7 +494,7 @@ public extension CEFBrowserHost {
     /// Send a mouse click event to the browser. The |x| and |y| coordinates are
     /// relative to the upper-left corner of the view.
     /// CEF name: `SendMouseClickEvent`
-    public func sendMouseClickEvent(_ event: CEFMouseEvent, type: CEFMouseButtonType, mouseUp: Bool, clickCount: Int) {
+    func sendMouseClickEvent(_ event: CEFMouseEvent, type: CEFMouseButtonType, mouseUp: Bool, clickCount: Int) {
         var cefEvent = event.toCEF()
         cefObject.send_mouse_click_event(cefObjectPtr, &cefEvent, type.toCEF(), mouseUp ? 1 : 0, Int32(clickCount))
     }
@@ -504,7 +502,7 @@ public extension CEFBrowserHost {
     /// Send a mouse move event to the browser. The |x| and |y| coordinates are
     /// relative to the upper-left corner of the view.
     /// CEF name: `SendMouseMoveEvent`
-    public func sendMouseMoveEvent(_ event: CEFMouseEvent, mouseLeave: Bool) {
+    func sendMouseMoveEvent(_ event: CEFMouseEvent, mouseLeave: Bool) {
         var cefEvent = event.toCEF()
         cefObject.send_mouse_move_event(cefObjectPtr, &cefEvent, mouseLeave ? 1 : 0)
     }
@@ -515,28 +513,28 @@ public extension CEFBrowserHost {
     /// In order to scroll inside select popups with window rendering disabled
     /// CefRenderHandler::GetScreenPoint should be implemented properly.
     /// CEF name: `SendMouseWheelEvent`
-    public func sendMouseWheelEvent(_ event: CEFMouseEvent, deltaX: Int, deltaY: Int) {
+    func sendMouseWheelEvent(_ event: CEFMouseEvent, deltaX: Int, deltaY: Int) {
         var cefEvent = event.toCEF()
         cefObject.send_mouse_wheel_event(cefObjectPtr, &cefEvent, Int32(deltaX), Int32(deltaY))
     }
     
     /// Send a touch event to the browser for a windowless browser.
     /// CEF name: `SendTouchEvent`
-    public func sendTouchEvent(_ event: CEFTouchEvent) {
+    func sendTouchEvent(_ event: CEFTouchEvent) {
         var cefEvent = event.toCEF()
         cefObject.send_touch_event(cefObjectPtr, &cefEvent)
     }
     
     /// Send a capture lost event to the browser.
     /// CEF name: `SendCaptureLostEvent`
-    public func sendCaptureLostEvent() {
+    func sendCaptureLostEvent() {
         cefObject.send_capture_lost_event(cefObjectPtr)
     }
 
     /// Notify the browser that the window hosting it is about to be moved or
     /// resized. This method is only used on Windows and Linux.
     /// CEF name: `NotifyMoveOrResizeStarted`
-    public func notifyMoveOrResizeStarted() {
+    func notifyMoveOrResizeStarted() {
         cefObject.notify_move_or_resize_started(cefObjectPtr)
     }
     
@@ -547,7 +545,7 @@ public extension CEFBrowserHost {
     /// can only be called on the UI thread. Can also be set at browser creation
     /// via CefBrowserSettings.windowless_frame_rate.
     /// CEF name: `GetWindowlessFrameRate`, `SetWindowlessFrameRate`
-    public var windowlessFrameRate: Int {
+    var windowlessFrameRate: Int {
         get { return Int(cefObject.get_windowless_frame_rate(cefObjectPtr)) }
         set { cefObject.set_windowless_frame_rate(cefObjectPtr, Int32(newValue)) }
     }
@@ -574,13 +572,13 @@ public extension CEFBrowserHost {
     ///
     /// This method is only used when window rendering is disabled.
     /// CEF name: `ImeSetComposition`
-    public func imeSetComposition(text: String? = nil,
+    func imeSetComposition(text: String? = nil,
                                   underlines: [CEFCompositionUnderline] = [],
                                   replacementRange: CEFRange? = nil,
                                   selectionRange: CEFRange? = nil) {
         let cefStrPtr = text != nil ? CEFStringPtrCreateFromSwiftString(text!) : nil
         defer { CEFStringPtrRelease(cefStrPtr) }
-        var cefUnderlinesPtr = UnsafeMutablePointer<cef_composition_underline_t>.allocate(capacity: underlines.count)
+        let cefUnderlinesPtr = UnsafeMutablePointer<cef_composition_underline_t>.allocate(capacity: underlines.count)
         defer { cefUnderlinesPtr.deallocate() }
         
         for i in 0..<underlines.count {
@@ -618,7 +616,7 @@ public extension CEFBrowserHost {
     /// |relative_cursor_pos| values are only used on OS X.
     /// This method is only used when window rendering is disabled.
     /// CEF name: `ImeCommitText`
-    public func imeCommitText(text: String? = nil, replacementRange: CEFRange? = nil, relativeCursorPosition: Int = 0) {
+    func imeCommitText(text: String? = nil, replacementRange: CEFRange? = nil, relativeCursorPosition: Int = 0) {
         let cefStrPtr = text != nil ? CEFStringPtrCreateFromSwiftString(text!) : nil
         defer { CEFStringPtrRelease(cefStrPtr) }
         
@@ -641,7 +639,7 @@ public extension CEFBrowserHost {
     /// be discarded. See comments on ImeSetComposition for usage.
     /// This method is only used when window rendering is disabled.
     /// CEF name: `ImeFinishComposingText`
-    public func imeFinishComposingText(keepSelection: Bool) {
+    func imeFinishComposingText(keepSelection: Bool) {
         cefObject.ime_finish_composing_text(cefObjectPtr, keepSelection ? 1 : 0)
     }
     
@@ -650,7 +648,7 @@ public extension CEFBrowserHost {
     /// usage.
     /// This method is only used when window rendering is disabled.
     /// CEF name: `ImeCancelComposition`
-    public func imeCancelComposition() {
+    func imeCancelComposition() {
         cefObject.ime_cancel_composition(cefObjectPtr)
     }
     
@@ -662,7 +660,7 @@ public extension CEFBrowserHost {
     /// CefRenderHandler::StartDragging).
     /// This method is only used when window rendering is disabled.
     /// CEF name: `DragTargetDragEnter`
-    public func dragTargetDragEnter(dragData: CEFDragData, event: CEFMouseEvent, operationMask: CEFDragOperationsMask) {
+    func dragTargetDragEnter(dragData: CEFDragData, event: CEFMouseEvent, operationMask: CEFDragOperationsMask) {
         let cefDragData = dragData.toCEF()
         var cefEvent = event.toCEF()
         cefObject.drag_target_drag_enter(cefObjectPtr, cefDragData, &cefEvent, operationMask.toCEF())
@@ -673,7 +671,7 @@ public extension CEFBrowserHost {
     /// DragTargetDragLeave/DragTargetDrop).
     /// This method is only used when window rendering is disabled.
     /// CEF name: `DragTargetDragOver`
-    public func dragTargetDragOver(event: CEFMouseEvent, operationMask: CEFDragOperationsMask) {
+    func dragTargetDragOver(event: CEFMouseEvent, operationMask: CEFDragOperationsMask) {
         var cefEvent = event.toCEF()
         cefObject.drag_target_drag_over(cefObjectPtr, &cefEvent, operationMask.toCEF())
     }
@@ -682,7 +680,7 @@ public extension CEFBrowserHost {
     /// calling DragTargetDragEnter).
     /// This method is only used when window rendering is disabled.
     /// CEF name: `DragTargetDragLeave`
-    public func dragTargetDragLeave() {
+    func dragTargetDragLeave() {
         cefObject.drag_target_drag_leave(cefObjectPtr)
     }
     
@@ -692,7 +690,7 @@ public extension CEFBrowserHost {
     /// the previous DragTargetDragEnter call.
     /// This method is only used when window rendering is disabled.
     /// CEF name: `DragTargetDrop`
-    public func dragTargetDrop(event: CEFMouseEvent) {
+    func dragTargetDrop(event: CEFMouseEvent) {
         var cefEvent = event.toCEF()
         cefObject.drag_target_drop(cefObjectPtr, &cefEvent)
     }
@@ -705,7 +703,7 @@ public extension CEFBrowserHost {
     /// DragSource* mthods.
     /// This method is only used when window rendering is disabled.
     /// CEF name: `DragSourceEndedAt`
-    public func dragSourceEndedAt(x: Int, y: Int, operationMask: CEFDragOperationsMask) {
+    func dragSourceEndedAt(x: Int, y: Int, operationMask: CEFDragOperationsMask) {
         cefObject.drag_source_ended_at(cefObjectPtr, Int32(x), Int32(y), operationMask.toCEF())
     }
     
@@ -717,14 +715,14 @@ public extension CEFBrowserHost {
     /// mthods.
     /// This method is only used when window rendering is disabled.
     /// CEF name: `DragSourceSystemDragEnded`
-    public func dragSourceSystemDragEnded() {
+    func dragSourceSystemDragEnded() {
         cefObject.drag_source_system_drag_ended(cefObjectPtr)
     }
 
     /// Returns the current visible navigation entry for this browser. This method
     /// can only be called on the UI thread.
     /// CEF name: `GetVisibleNavigationEntry`
-    public var visibleNavigationEntry: CEFNavigationEntry {
+    var visibleNavigationEntry: CEFNavigationEntry {
         let cefEntry = cefObject.get_visible_navigation_entry(cefObjectPtr)
         return CEFNavigationEntry.fromCEF(cefEntry)!
     }
@@ -754,7 +752,7 @@ public extension CEFBrowserHost {
     /// objects are not created. The client may implement platform accessibility
     /// objects using CefAccessibiltyHandler callbacks if desired.
     /// CEF name: `SetAccessibilityState`
-    public func setAccessibilityState(_ state: CEFState) {
+    func setAccessibilityState(_ state: CEFState) {
         cefObject.set_accessibility_state(cefObjectPtr, state.toCEF())
     }
 
@@ -762,20 +760,20 @@ public extension CEFBrowserHost {
     /// Notifications are disabled by default. |min_size| and |max_size| define the
     /// range of allowed sizes.
     /// CEF name: `SetAutoResizeEnabled`
-    public func setAutoResizeEnabled(minSize: CGSize, maxSize: CGSize) {
+    func setAutoResizeEnabled(minSize: CGSize, maxSize: CGSize) {
         var cefMinSize = minSize.toCEF()
         var cefMaxSize = maxSize.toCEF()
         cefObject.set_auto_resize_enabled(cefObjectPtr, 1, &cefMinSize, &cefMaxSize)
     }
 
-    public func setAutoResizeDisabled() {
+    func setAutoResizeDisabled() {
         cefObject.set_auto_resize_enabled(cefObjectPtr, 0, nil, nil)
     }
 
     /// Returns the extension hosted in this browser or NULL if no extension is
     /// hosted. See CefRequestContext::LoadExtension for details.
     /// CEF name: `GetExtension`
-    public var hostedExtension: CEFExtension? {
+    var hostedExtension: CEFExtension? {
         guard let cefExt = cefObject.get_extension(cefObjectPtr) else {
             return nil
         }
@@ -787,14 +785,14 @@ public extension CEFBrowserHost {
     /// Background hosts do not have a window and are not displayable. See
     /// CefRequestContext::LoadExtension for details.
     /// CEF name: `IsBackgroundHost`
-    public var isBackgroundHost: Bool {
+    var isBackgroundHost: Bool {
         return cefObject.is_background_host(cefObjectPtr) != 0
     }
 
     /// Set whether the browser's audio is muted. This method can only be
     /// called on the UI thread.
     /// CEF name: `IsAudioMuted`, `SetAudioMuted`
-    public var isAudioMuted: Bool {
+    var isAudioMuted: Bool {
         get { return cefObject.is_audio_muted(cefObjectPtr) != 0 }
         set { cefObject.set_audio_muted(cefObjectPtr, newValue ? 1 : 0) }
     }
@@ -805,7 +803,7 @@ public extension CEFBrowserHost {
     /// specified visitor. If |current_only| is true only the current navigation
     /// entry will be sent, otherwise all navigation entries will be sent.
     /// CEF name: `GetNavigationEntries`
-    public func enumerateNavigationEntries(currentOnly: Bool, block: @escaping CEFNavigationEntryVisitorVisitBlock) {
+    func enumerateNavigationEntries(currentOnly: Bool, block: @escaping CEFNavigationEntryVisitorVisitBlock) {
         enumerateNavigationEntries(with: CEFNavigationEntryVisitorBridge(block: block), currentOnly: currentOnly)
     }
 
@@ -824,17 +822,15 @@ public extension CEFBrowserHost {
     /// dismissed or immediately if another dialog is already pending. The dialog
     /// will be initiated asynchronously on the UI thread.
     /// CEF name: `RunFileDialog`
-    public func runFileDialog(mode: CEFFileDialogMode,
+    func runFileDialog(mode: CEFFileDialogMode,
                               title: String?,
                               defaultPath: String?,
                               acceptFilters: [String],
-                              selectedFilterIndex: Int,
                               block: @escaping CEFRunFileDialogCallbackOnFileDialogDismissedBlock) {
         runFileDialog(mode: mode,
                       title: title,
                       defaultPath: defaultPath,
                       acceptFilters: acceptFilters,
-                      selectedFilterIndex: selectedFilterIndex,
                       callback: CEFRunFileDialogCallbackBridge(block: block))
     }
 
@@ -849,7 +845,7 @@ public extension CEFBrowserHost {
     /// unlimited. If |bypass_cache| is true then |image_url| is requested from the
     /// server even if it is present in the browser cache.
     /// CEF name: `DownloadImage`
-    public func downloadImage(url: URL,
+    func downloadImage(url: URL,
                        isFavicon: Bool,
                        maxImageSize: UInt32,
                        bypassCache: Bool,
@@ -866,7 +862,7 @@ public extension CEFBrowserHost {
     /// |path| when done. For PDF printing to work on Linux you must implement the
     /// CefPrintHandler::GetPdfPaperSize method.
     /// CEF name: `PrintToPDF`
-    public func printToPDF(at path: String, settings: CEFPDFPrintSettings, block: @escaping CEFPDFPrintCallbackOnPDFPrintFinishedBlock) {
+    func printToPDF(at path: String, settings: CEFPDFPrintSettings, block: @escaping CEFPDFPrintCallbackOnPDFPrintFinishedBlock) {
         printToPDF(at: path, settings: settings, callback: CEFPDFPrintCallbackBridge(block: block))
     }
 }

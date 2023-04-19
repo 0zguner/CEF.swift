@@ -255,13 +255,6 @@ public struct CEFSettings {
     /// default schemes ("http", "https", "ws" and "wss") will also be supported.
     /// CEF name: `cookieable_schemes_exclude_defaults`
     public var cookieableSchemesExcludeDefaults: Bool = false
-
-    /// GUID string used for identifying the application. This is passed to the
-    /// system AV function for scanning downloaded files. By default, the GUID
-    /// will be an empty string and the file will be treated as an untrusted
-    /// file when the GUID is empty.
-    /// CEF name: `application_client_id_for_file_scanning`
-    public var applicationClientIDForFileScanning: String = ""
     
     public init() {
     }
@@ -301,7 +294,6 @@ extension CEFSettings {
         CEFStringSetFromSwiftString(acceptLanguageList, cefStringPtr: &cefStruct.accept_language_list)
         CEFStringSetFromSwiftString(cookieableSchemesList, cefStringPtr: &cefStruct.cookieable_schemes_list)
         cefStruct.cookieable_schemes_exclude_defaults = cookieableSchemesExcludeDefaults ? 1 : 0
-        CEFStringSetFromSwiftString(applicationClientIDForFileScanning, cefStringPtr: &cefStruct.application_client_id_for_file_scanning)
 
         return cefStruct
     }
@@ -322,7 +314,6 @@ extension cef_settings_t {
         cef_string_utf16_clear(&resources_dir_path)
         cef_string_utf16_clear(&locales_dir_path)
         cef_string_utf16_clear(&accept_language_list)
-        cef_string_utf16_clear(&application_client_id_for_file_scanning)
         cef_string_utf16_clear(&cookieable_schemes_list)
         cef_string_utf16_clear(&root_cache_path)
     }

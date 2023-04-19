@@ -79,11 +79,6 @@ public struct CEFBrowserSettings {
     /// CEF name: `javascript_dom_paste`
     public var javascriptDOMPaste: CEFState = .default
         
-    /// Controls whether any plugins will be loaded. Also configurable using the
-    /// "disable-plugins" command-line switch.
-    /// CEF name: `plugins`
-    public var plugins: CEFState = .default
-    
     /// Controls whether image URLs will be loaded from the network. A cached image
     /// will still be rendered if requested. Also configurable using the
     /// "disable-image-loading" command-line switch.
@@ -167,7 +162,6 @@ extension CEFBrowserSettings {
         cefStruct.javascript_close_windows = javascriptCloseWindows.toCEF()
         cefStruct.javascript_access_clipboard = javascriptAccessClipboard.toCEF()
         cefStruct.javascript_dom_paste = javascriptDOMPaste.toCEF()
-        cefStruct.plugins = plugins.toCEF()
         cefStruct.image_loading = imageLoading.toCEF()
         cefStruct.image_shrink_standalone_to_fit = imageShrinkStandaloneToFit.toCEF()
         cefStruct.text_area_resize = textAreaResize.toCEF()
@@ -201,7 +195,6 @@ extension CEFBrowserSettings {
         settings.javascriptCloseWindows = CEFState.fromCEF(value.javascript_close_windows)
         settings.javascriptAccessClipboard = CEFState.fromCEF(value.javascript_access_clipboard)
         settings.javascriptDOMPaste = CEFState.fromCEF(value.javascript_dom_paste)
-        settings.plugins = CEFState.fromCEF(value.plugins)
         settings.imageLoading = CEFState.fromCEF(value.image_loading)
         settings.imageShrinkStandaloneToFit = CEFState.fromCEF(value.image_shrink_standalone_to_fit)
         settings.textAreaResize = CEFState.fromCEF(value.text_area_resize)

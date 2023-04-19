@@ -91,20 +91,4 @@ public enum CEFProcessUtils {
     public static func quitMessageLoop() {
         cef_quit_message_loop()
     }
-
-    /// Set to true before calling Windows APIs like TrackPopupMenu that enter a
-    /// modal message loop. Set to false after exiting the modal message loop.
-    /// CEF name: `CefSetOSModalLoop`
-    public static func setOSModalLoop(modal: Bool) {
-        cef_set_osmodal_loop(modal ? 1 : 0)
-    }
-
-    /// Call during process startup to enable High-DPI support on Windows 7 or newer.
-    /// Older versions of Windows should be left DPI-unaware because they do not
-    /// support DirectWrite and GDI fonts are kerned very badly.
-    /// CEF name: `CefEnableHighDPISupport`
-    public static func enableHighDPISupport() {
-        cef_enable_highdpi_support()
-    }
-
 }

@@ -44,11 +44,11 @@ public protocol CEFResourceBundleHandler {
 
 public extension CEFResourceBundleHandler {
     
-    public func localizedStringForID(stringID: Int) -> String? {
+    func localizedStringForID(stringID: Int) -> String? {
         return nil
     }
     
-    public func dataResourceForID(resourceID: Int) -> (dataBufferPtr: UnsafeMutableRawPointer, dataSize: size_t)? {
+    func dataResourceForID(resourceID: Int) -> (dataBufferPtr: UnsafeMutableRawPointer, dataSize: size_t)? {
         return nil
     }
 

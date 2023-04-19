@@ -12,7 +12,7 @@ public extension CEFCertStatus {
 
     /// Returns true if the certificate status represents an error.
     /// CEF name: `CefIsCertStatusError`
-    public var isError: Bool {
+    var isError: Bool {
         return cef_is_cert_status_error(self.toCEF()) != 0
     }
     

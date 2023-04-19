@@ -16,7 +16,7 @@ public struct CEFContextMenuMediaStateFlags: OptionSet {
     }
 
     /// CEF name: `CM_MEDIAFLAG_NONE`.
-    public static let none = CEFContextMenuMediaStateFlags(rawValue: 0)
+    public static let none = CEFContextMenuMediaStateFlags([])
     /// CEF name: `CM_MEDIAFLAG_ERROR`.
     public static let error = CEFContextMenuMediaStateFlags(rawValue: 1 << 0)
     /// CEF name: `CM_MEDIAFLAG_PAUSED`.

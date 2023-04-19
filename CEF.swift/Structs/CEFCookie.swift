@@ -80,11 +80,11 @@ extension CEFCookie {
         CEFStringSetFromSwiftString(path, cefStringPtr: &cefStruct.path)
         cefStruct.secure = isSecure ? 1 : 0
         cefStruct.httponly = isHTTPOnly ? 1 : 0
-        CEFTimeSetFromSwiftDate(creationDate, cefTimePtr: &cefStruct.creation)
-        CEFTimeSetFromSwiftDate(lastAccessDate, cefTimePtr: &cefStruct.last_access)
+        CEFBasetimeSetFromSwiftDate(creationDate, basetimePtr: &cefStruct.creation)
+        CEFBasetimeSetFromSwiftDate(lastAccessDate, basetimePtr: &cefStruct.last_access)
         cefStruct.has_expires = expirationDate != nil ? 1 : 0
         if let expirationDate = expirationDate {
-            CEFTimeSetFromSwiftDate(expirationDate, cefTimePtr: &cefStruct.expires)
+            CEFBasetimeSetFromSwiftDate(expirationDate, basetimePtr: &cefStruct.expires)
         }
         
         return cefStruct
@@ -99,10 +99,10 @@ extension CEFCookie {
         cookie.path = CEFStringToSwiftString(value.path)
         cookie.isSecure = value.secure != 0
         cookie.isHTTPOnly = value.httponly != 0
-        cookie.creationDate = CEFTimeToSwiftDate(value.creation)
-        cookie.lastAccessDate = CEFTimeToSwiftDate(value.last_access)
+        cookie.creationDate = BasetimeToSwiftDate(value.creation)
+        cookie.lastAccessDate = BasetimeToSwiftDate(value.last_access)
         if value.has_expires == 1 {
-            cookie.expirationDate = CEFTimeToSwiftDate(value.expires)
+            cookie.expirationDate = BasetimeToSwiftDate(value.expires)
         }
         
         return cookie

@@ -31,7 +31,7 @@ public protocol CEFNavigationEntryVisitor {
 
 public extension CEFNavigationEntryVisitor {
     
-    public func visit(entry: CEFNavigationEntry, isCurrent: Bool, index: Int, totalCount: Int) -> CEFNavigationEntryVisitorAction {
+    func visit(entry: CEFNavigationEntry, isCurrent: Bool, index: Int, totalCount: Int) -> CEFNavigationEntryVisitorAction {
         return .stop
     }
     
