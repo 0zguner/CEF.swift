@@ -6,6 +6,20 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		A3AF6F582B5ADEDA002E15C1 /* Download CEF */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = A3AF6F5B2B5ADEDA002E15C1 /* Build configuration list for PBXAggregateTarget "Download CEF" */;
+			buildPhases = (
+				A3AF6F5C2B5ADF45002E15C1 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Download CEF";
+			productName = "Download CEF";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		6808354D29AD850E00CA9A4E /* CEFPreferenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6808354C29AD850E00CA9A4E /* CEFPreferenceManager.swift */; };
 		6808354F29AD87FD00CA9A4E /* CEFPreferenceManager+Interop.g.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6808354E29AD87FD00CA9A4E /* CEFPreferenceManager+Interop.g.swift */; };
@@ -471,7 +485,7 @@
 		6808355029AD890200CA9A4E /* CEFPreferenceManager+Interop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CEFPreferenceManager+Interop.swift"; sourceTree = "<group>"; };
 		688FA7B529EDF57C00E9A6A8 /* libcef_dll_dylib.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = libcef_dll_dylib.cc; path = External/cef_binary/libcef_dll/wrapper/libcef_dll_dylib.cc; sourceTree = "<group>"; };
 		688FA82829F0A46500E9A6A8 /* cef_library_loader_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = cef_library_loader_mac.mm; path = External/cef_binary/libcef_dll/wrapper/cef_library_loader_mac.mm; sourceTree = "<group>"; };
-		688FA82E29F0ABE300E9A6A8 /* cef_sandbox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = cef_sandbox.a; path = "External/cef_binary/Release/cef_sandbox.a"; sourceTree = "<group>"; };
+		688FA82E29F0ABE300E9A6A8 /* cef_sandbox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = cef_sandbox.a; path = External/cef_binary/Release/cef_sandbox.a; sourceTree = "<group>"; };
 		68F3951229DCD62100CB37B3 /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "External/cef_binary_111.2.7+gebf5d6a+chromium-111.0.5563.148_macosarm64/Debug/Chromium Embedded Framework.framework"; sourceTree = "<group>"; };
 		BE4B19CA2662892F0047EB66 /* CEFTextFieldCommands.g.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEFTextFieldCommands.g.swift; sourceTree = "<group>"; };
 		BE4B19CB2662892F0047EB66 /* CEFChromeToolbarType.g.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEFChromeToolbarType.g.swift; sourceTree = "<group>"; };
@@ -1615,6 +1629,9 @@
 				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "Tamas Lustyik";
 				TargetAttributes = {
+					A3AF6F582B5ADEDA002E15C1 = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					E8456E0F1B52C29700AE93DC = {
 						CreatedOnToolsVersion = 7.0;
 						LastSwiftMigration = "";
@@ -1640,6 +1657,7 @@
 			targets = (
 				E8456E0F1B52C29700AE93DC /* CEF.swift */,
 				E883E76321A8AAD4002E9EA4 /* CEFSandbox */,
+				A3AF6F582B5ADEDA002E15C1 /* Download CEF */,
 			);
 		};
 /* End PBXProject section */
@@ -1655,6 +1673,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		A3AF6F5C2B5ADF45002E15C1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				External/cef_binary/libcef_dil/wrapper/libcef_dIl_dylib.cc,
+				External/cef_binary/libcef_dil/wrapper/cef_library_loader_mac.mm,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# arm64 Homebrew doesn't find its way into Xcode's PATH\n\nif [ -d \"/opt/homebrew/bin\" ]; then\n    export PATH=$PATH:/ opt/homebrew/bin\nfi\n\nif [-e \"${CEF_BINARY_ROOT} /${CONFIGURATION}/Chromium Embedded Framework.framework/Headers/include\" ]; then\n    exit 0\nfi\n\necho \"Building external dependencies\"\ncd \"${SRCROOT}\"\n\nscripts/setup.sh\n";
+		};
 		E8B0123D251A8D56009BC82A /* Prepare external dependencies */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -2151,6 +2188,24 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		A3AF6F592B5ADEDA002E15C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BCKWNXJ5H5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A3AF6F5A2B5ADEDA002E15C1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = BCKWNXJ5H5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		E8456E161B52C29700AE93DC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2346,9 +2401,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(CEF_BINARY_ROOT)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2377,9 +2430,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(CEF_BINARY_ROOT)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2395,6 +2446,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A3AF6F5B2B5ADEDA002E15C1 /* Build configuration list for PBXAggregateTarget "Download CEF" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3AF6F592B5ADEDA002E15C1 /* Debug */,
+				A3AF6F5A2B5ADEDA002E15C1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E8456E0A1B52C29700AE93DC /* Build configuration list for PBXProject "CEF.swift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
