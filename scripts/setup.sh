@@ -62,6 +62,8 @@ if [ -h External/cef_binary ]; then
     rm -f External/cef_binary
 fi
 
+rm -rf External/cef_binary || true
+
 ln -s "${CEFBUILD_DIR_NAME}" External/cef_binary
 
 # fix framework id
